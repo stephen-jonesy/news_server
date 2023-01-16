@@ -27,5 +27,11 @@ describe('get /api/topics', () => {
             });
         })
     });
+    it('returns status 404 for a bad endpoint', () => {
+        return request(app)
+        .get("/api/topic")
+        .expect(404)
+
+    });
     
 });
