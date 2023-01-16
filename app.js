@@ -13,7 +13,7 @@ app.get("/api/articles/:article_id", getArticleById);
 
 
 app.use((err, req, res, next) => {
-    if (err.status === 400) {
+    if (err.status === 404) {
       res.status(err.status).send({ message: err.message });
     } else next(err);
 });

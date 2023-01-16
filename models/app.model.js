@@ -19,8 +19,7 @@ exports.selectArticles = () => {
     return db.query(sqlString)
     .then((data) => {
         if (!data.rows.length) {
-                return Promise.reject({ status: 400, message: "Bad request" 
-            });
+                return Promise.reject({ status: 404, message: "Opps, article does not exist" });
         }
         return data;
 
@@ -38,8 +37,7 @@ exports.selectArticleById = (articleId) => {
     return db.query(sqlString, [articleId])
     .then((data) => {
         if (!data.rows.length) {
-                return Promise.reject({ status: 400, message: "Bad request" 
-            });
+            return Promise.reject({ status: 404, message: "Opps, article does not exist" })
         }
         return data;
 

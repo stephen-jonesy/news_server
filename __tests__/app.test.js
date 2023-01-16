@@ -83,10 +83,10 @@ describe('GET /api/articles/:article_id', () => {
     it("returns 400 status when passed an article_id that doesn\'t exist", () => {
         return request(app)
         .get("/api/articles/75")
-        .expect(400)
+        .expect(404)
         .then(({body}) => {
             console.log(body.message);
-            expect(body.message).toBe("Bad request");
+            expect(body.message).toBe("Opps, article does not exist");
         })
     });
 
