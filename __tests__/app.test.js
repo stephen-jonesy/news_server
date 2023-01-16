@@ -35,3 +35,26 @@ describe('get /api/topics', () => {
     });
     
 });
+
+describe('Name of the group', () => {
+    it('returns status 200 and an array of all articles objects with correct properties', () => {
+        return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({body})=> {
+            console.log(body);
+            expect(Array.isArray(body)).toBe(true);
+            body.forEach((topic) => {
+                expect(topic).toHaveProperty("author");
+                expect(topic).toHaveProperty("title");   
+                expect(topic).toHaveProperty("article_id");    
+                expect(topic).toHaveProperty("topic");    
+                expect(topic).toHaveProperty("created_at");    
+                expect(topic).toHaveProperty("votes");    
+                expect(topic).toHaveProperty("article_img_url");    
+                // expect(topic).toHaveProperty("comment_count");    
+                    
+            });
+        })
+    });
+});
