@@ -39,7 +39,15 @@ exports.getCommentsByArticleId = (req, res, next) => {
     const articleId = req.params.article_id;
     return selectCommentsByArticleId(articleId)
     .then(({rows}) => {
-        res.status(200).send(rows)
+        console.log(rows);
+        if (!rows) {
+            res.status(200).send({message: 'No comments found'})
+
+        }
+        else {
+            res.status(200).send(rows)
+
+        }
     })
     .catch((err) => {
         next(err);

@@ -18,7 +18,7 @@ app.post('/api/articles/:article_id/comments', postCommentById)
 
 app.use((err, req, res, next) => {
     console.log(err);
-    if (err.status === 404) {
+    if (err.status) {
       res.status(err.status).send({ message: err.message });
     } else next(err);
 });

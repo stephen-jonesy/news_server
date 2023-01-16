@@ -35,7 +35,7 @@ describe('get /api/topics', () => {
     });
     
 });
-describe('Name of the group', () => {
+describe('GET /api/articles', () => {
     it('returns status 200 and an array of all articles objects with correct properties', () => {
         return request(app)
         .get("/api/articles")
@@ -97,7 +97,6 @@ describe('get  /api/articles/:article_id/comments', () => {
         .get("/api/articles/3/comments")
         .expect(200)
         .then(({body})=> {
-            console.log(body);
             expect(Array.isArray(body)).toBe(true);
             expect(body.length).toBe(2);
             expect(body).toBeSortedBy("created_at", {
@@ -115,12 +114,20 @@ describe('get  /api/articles/:article_id/comments', () => {
 
         })
     });
-    it('Returns 404 status and a message for an article_id that does not correspond to any comments ', () => {
+    it('Returns 200 status and a message for an article_id that does not correspond to any comments ', () => {
         return request(app)
-        .get("/api/articles/75/comments")
+        .get("/api/articles/2/comments")
+        .expect(200)
+        .then(({body}) => {
+            expect(body.message).toBe('No comments found');
+        })
+    });
+    it('Returns 404 status and message when article does not exist ', () => {
+        return request(app)
+        .get("/api/articles/77/comments")
         .expect(404)
         .then(({body}) => {
-            expect(body.message).toBe('Opps, no comments found');
+            expect(body.message).toBe('Opps, this article doesn\'t exist');
         })
     });
     it('Returns 400 status and and a bad request message when passed wrong data type', () => {
