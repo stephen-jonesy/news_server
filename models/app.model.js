@@ -43,4 +43,5 @@ exports.selectArticleById = (articleId) => {
         }
         return data;
 
-    })}
+    })
+}
