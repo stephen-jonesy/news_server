@@ -74,6 +74,7 @@ describe('GET /api/articles/:article_id', () => {
         .get("/api/articles/2")
         .expect(200)
         .then(({body}) => {
+            console.log(body);
             const article = body[0];
             expect(article instanceof Object).toBe(true);
             expect(article).toHaveProperty('article_id', 2);
@@ -85,9 +86,25 @@ describe('GET /api/articles/:article_id', () => {
         .get("/api/articles/75")
         .expect(404)
         .then(({body}) => {
-            console.log(body.message);
             expect(body.message).toBe("Opps, article does not exist");
         })
     });
 
+});
+
+describe('POST /api/articles/:article_id/comments', () => {
+    it('returns with a status: 201 and responds with the posted comment', () => {
+        const comment = {
+            username: 'rogersop',
+            body: 'lorem ipsum'
+        }
+        return request(app)
+        .post("/api/articles/1/comments")
+        .send(comment)
+        .expect(201)
+        .then(({body})=> {
+            const postedComment = body[0].body
+            expect(postedComment).toBe('lorem ipsum');
+        })
+    });
 });

@@ -31,7 +31,9 @@ exports.selectArticleById = (articleId) => {
 
     const sqlString = `
         SELECT * FROM articles
-        where articles.article_id = $1;
+        where articles.article_id = $1
+        ORDER BY created_at DESC;
+
     `
 
     return db.query(sqlString, [articleId])
@@ -42,4 +44,14 @@ exports.selectArticleById = (articleId) => {
         return data;
 
     })
+}
+
+exports.addCommentById = (articleId, {username, body}) => {
+    console.log(body, articleId, username);
+    const sqlString = `
+        INSERT INTO comments
+        (body, article_id, author)
+        VALUES ($1, $2, $3) RETURNING *;
+    `;
+    return db.query(sqlString, [body, articleId, username])
 }
