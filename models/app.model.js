@@ -31,8 +31,7 @@ exports.selectArticleById = (articleId) => {
 
     const sqlString = `
         SELECT * FROM articles
-        where articles.article_id = $1
-        ORDER BY created_at DESC;
+        where articles.article_id = $1;
 
     `
 
@@ -46,8 +45,24 @@ exports.selectArticleById = (articleId) => {
     })
 }
 
+exports.selectCommentsByArticleId = (articleId) => {
+    const sqlString = `
+        SELECT * FROM comments
+        where comments.article_id = $1
+        ORDER BY created_at DESC;
+    `
+
+    return db.query(sqlString,[articleId])
+    .then((data)=> {
+        if (!data.rows.length) {
+            return Promise.reject({ status: 404, message: "Opps, no comments found" })
+
+        }
+        return data;
+    })
+}
+
 exports.addCommentById = (articleId, {username, body}) => {
-    console.log(body, articleId, username);
     const sqlString = `
         INSERT INTO comments
         (body, article_id, author)

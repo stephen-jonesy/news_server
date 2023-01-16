@@ -35,7 +35,6 @@ describe('get /api/topics', () => {
     });
     
 });
-
 describe('Name of the group', () => {
     it('returns status 200 and an array of all articles objects with correct properties', () => {
         return request(app)
@@ -74,7 +73,6 @@ describe('GET /api/articles/:article_id', () => {
         .get("/api/articles/2")
         .expect(200)
         .then(({body}) => {
-            console.log(body);
             const article = body[0];
             expect(article instanceof Object).toBe(true);
             expect(article).toHaveProperty('article_id', 2);
@@ -91,6 +89,51 @@ describe('GET /api/articles/:article_id', () => {
     });
 
 });
+
+
+describe('get  /api/articles/:article_id/comments', () => {
+    it('returns status 200 and an array of corresponding comment objects for the given article_id ', () => {
+        return request(app)
+        .get("/api/articles/3/comments")
+        .expect(200)
+        .then(({body})=> {
+            console.log(body);
+            expect(Array.isArray(body)).toBe(true);
+            expect(body.length).toBe(2);
+            expect(body).toBeSortedBy("created_at", {
+                descending: true,
+            });
+            body.forEach((comment) => {
+                expect(comment).toHaveProperty("comment_id");
+                expect(comment).toHaveProperty("votes");    
+                expect(comment).toHaveProperty("created_at");    
+                expect(comment).toHaveProperty("author");    
+                expect(comment).toHaveProperty("body");    
+                expect(comment).toHaveProperty("article_id");    
+
+            });            
+
+        })
+    });
+    it('Returns 404 status and a message for an article_id that does not correspond to any comments ', () => {
+        return request(app)
+        .get("/api/articles/75/comments")
+        .expect(404)
+        .then(({body}) => {
+            expect(body.message).toBe('Opps, no comments found');
+        })
+    });
+    it('Returns 400 status and and a bad request message when passed wrong data type', () => {
+        return request(app)
+        .get("/api/articles/baddata/comments")
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toBe('Bad request');
+        })
+    });
+
+});
+
 
 describe('POST /api/articles/:article_id/comments', () => {
     it('returns with a status: 201 and responds with the posted comment', () => {
