@@ -3,8 +3,6 @@ const { getTopics, getArticles, getArticleById, getCommentsByArticleId } = requi
 
 const app = express();
 
-app.use(express.json());
-
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles", getArticles);
