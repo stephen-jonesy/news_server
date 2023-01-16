@@ -16,6 +16,14 @@ exports.selectArticles = () => {
         GROUP BY articles.article_id
         ORDER BY created_at DESC;
     `
-    return db.query(sqlString);
+    return db.query(sqlString)
+    .then((data) => {
+        if (!data.rows.length) {
+                return Promise.reject({ status: 400, message: "Bad request" 
+            });
+        }
+        return data;
+
+    })
 
 }

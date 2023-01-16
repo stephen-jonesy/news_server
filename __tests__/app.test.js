@@ -3,6 +3,7 @@ const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index")
 const request = require("supertest");
 const app = require("../app");
+const sorted = require("jest-sorted");
 
 beforeEach(() => {
     return seed(data);
@@ -42,8 +43,10 @@ describe('Name of the group', () => {
         .get("/api/articles")
         .expect(200)
         .then(({body})=> {
-            console.log(body);
             expect(Array.isArray(body)).toBe(true);
+            expect(body).toBeSortedBy("created_at", {
+                descending: true,
+            });
             body.forEach((topic) => {
                 expect(topic).toHaveProperty("author");
                 expect(topic).toHaveProperty("title");   
@@ -52,9 +55,16 @@ describe('Name of the group', () => {
                 expect(topic).toHaveProperty("created_at");    
                 expect(topic).toHaveProperty("votes");    
                 expect(topic).toHaveProperty("article_img_url");    
-                // expect(topic).toHaveProperty("comment_count");    
+                expect(topic).toHaveProperty("comment_count");    
                     
             });
+            
         })
+    })
+    it('returns status 404 for a bad endpoint', () => {
+        return request(app)
+        .get("/api/article")
+        .expect(404)
+
     });
 });
