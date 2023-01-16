@@ -67,3 +67,27 @@ describe('Name of the group', () => {
 
     });
 });
+
+describe('GET /api/articles/:article_id', () => {
+    it('returns 200 status and correct article by id ', () => {
+        return request(app)
+        .get("/api/articles/2")
+        .expect(200)
+        .then(({body}) => {
+            const article = body[0];
+            expect(article instanceof Object).toBe(true);
+            expect(article).toHaveProperty('article_id', 2);
+            expect(article).toHaveProperty('title', 'Sony Vaio; or, The Laptop');
+        })
+    });
+    it("returns 400 status when passed an article_id that doesn\'t exist", () => {
+        return request(app)
+        .get("/api/articles/75")
+        .expect(400)
+        .then(({body}) => {
+            console.log(body.message);
+            expect(body.message).toBe("Bad request");
+        })
+    });
+
+});
