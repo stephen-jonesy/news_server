@@ -11,11 +11,11 @@ exports.selectArticles = () => {
     const sqlString = `
         SELECT articles.*, COUNT(comments.article_id) as comment_count 
         FROM articles
-        JOIN comments
+        LEFT JOIN comments
         ON articles.article_id = comments.article_id
         GROUP BY articles.article_id
         ORDER BY created_at DESC;
-    `
+    `;
     return db.query(sqlString)
     .then((data) => {
         if (!data.rows.length) {
@@ -30,10 +30,14 @@ exports.selectArticles = () => {
 exports.selectArticleById = (articleId) => {
 
     const sqlString = `
-        SELECT * FROM articles
-        where articles.article_id = $1;
-
-    `
+        SELECT articles.*, COUNT(comments.article_id) as comment_count 
+        FROM articles
+        LEFT JOIN comments
+        ON articles.article_id = comments.article_id
+        GROUP BY articles.article_id
+        HAVING articles.article_id = $1;
+        
+    `;
 
     return db.query(sqlString, [articleId])
     .then((data) => {

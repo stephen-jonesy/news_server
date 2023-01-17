@@ -39,12 +39,14 @@ describe('GET /api/articles', () => {
         .get("/api/articles")
         .expect(200)
         .then(({body})=> {
+            console.log(body.articles);
             const articles = body.articles;
             expect(Array.isArray(articles)).toBe(true);
             expect(articles).toBeSortedBy("created_at", {
                 descending: true,
             });
-            expect(articles).toHaveLength(5);
+            expect(articles).toHaveLength(12);
+            console.log(articles);
             articles.forEach((article) => {
                 expect(article).toHaveProperty("author");
                 expect(article).toHaveProperty("title");   
@@ -75,9 +77,12 @@ describe('GET /api/articles/:article_id', () => {
         .expect(200)
         .then(({body}) => {
             const article = body.article;
+            console.log(article);
             expect(article instanceof Object).toBe(true);
             expect(article).toHaveProperty('article_id', 2);
             expect(article).toHaveProperty('title', 'Sony Vaio; or, The Laptop');
+            expect(article).toHaveProperty('comment_count', '0');
+
         })
     });
     it("returns 400 status when passed an article_id that doesn\'t exist", () => {
