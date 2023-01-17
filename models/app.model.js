@@ -1,25 +1,45 @@
 const db = require('../db/connection')
 
 exports.selectTopics = () => {
+    const queryValues = [];
+
     const sqlString = `
         SELECT * FROM topics;
     `
     return db.query(sqlString);
 }
 
-exports.selectArticles = () => {
-    const sqlString = `
+exports.selectArticles = ({topic, sort_by, order}) => {
+    const queryValues = [];
+
+    let sqlString = `
         SELECT articles.*, COUNT(comments.article_id) as comment_count 
         FROM articles
         JOIN comments
         ON articles.article_id = comments.article_id
         GROUP BY articles.article_id
-        ORDER BY created_at DESC;
-    `
-    return db.query(sqlString)
+    `;
+
+    if(topic) {
+
+        sqlString += `HAVING topic = $1 `;
+        queryValues.push(topic);
+    }
+
+    if (sort_by && !['title', 'topic', 'author', 'body', 'created_at', 'article_img_url'].includes(sort_by)) {
+        return Promise.reject({ status: 400, message: 'Invalid sort query' });
+    }
+
+    if (order && !['asc', 'desc'].includes(order)) {
+        return Promise.reject({ status: 400, message: 'Invalid order query' });
+    }
+
+    sqlString += `ORDER BY ${sort_by === undefined ? 'created_at' : sort_by} ${order === undefined ? 'DESC' : order};`;
+
+    return db.query(sqlString, queryValues)
     .then((data) => {
         if (!data.rows.length) {
-                return Promise.reject({ status: 404, message: "Opps, article does not exist" });
+            return Promise.reject({ status: 404, message: "Opps, article does not exist" });
         }
         return data;
 
