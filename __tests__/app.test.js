@@ -65,6 +65,53 @@ describe('GET /api/articles', () => {
         .expect(404)
 
     });
+    it('returns 200 status and queried articles but topic when endpoint contains a topic query', () => {
+        return request(app)
+        .get("/api/articles?topic=cats")
+        .expect(200)
+        .then(({body}) => {
+            expect(body[0]).toHaveProperty('topic', 'cats')
+        })
+    });
+    it('returns 200 status and sorts articles by sortBy when endpoint contains a sortBy query ', () => {
+        return request(app)
+        .get("/api/articles?sort_by=author")
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toBeSortedBy("author", {
+                descending: true,
+            });
+        });
+    });
+    it('returns 200 status and orders created_by by ascending', () => {
+        return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toBeSortedBy("created_at", {
+                descending: false,
+            });
+        });
+    });
+    it('returns 200 status and sorts articles by author in ascending order', () => {
+        return request(app)
+        .get("/api/articles?sort_by=author&order=asc")
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toBeSortedBy("author", {
+                descending: false,
+            });
+        });
+    });
+    it('returns status of 404 from passed an invalid query ', () => {
+        return request(app)
+        .get("/api/articles?sort_by=stuff")
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toBe('Invalid sort query');
+        })
+    });
+
 });
 
 describe('GET /api/articles/:article_id', () => {
@@ -128,7 +175,6 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get("/api/articles/2/comments")
         .expect(200)
         .then(({body}) => {
-            console.log(body);
             expect(body.message).toBe('No comments found');
         })
     });

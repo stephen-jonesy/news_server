@@ -17,14 +17,12 @@ app.post('/api/articles/:article_id/comments', postCommentById)
 
 
 app.use((err, req, res, next) => {
-    console.log(err);
     if (err.status) {
       res.status(err.status).send({ message: err.message });
     } else next(err);
 });
   
 app.use((err, req, res, next) => {
-    console.log(err);
     if (err.code === '22P02' || err.code === "23502" ) {
       res.status(400).send({ message: 'Bad request' });
     }else if(err.code === "23503"){
@@ -34,7 +32,6 @@ app.use((err, req, res, next) => {
 });
   
 app.use((err, req, res, next) => {
-    console.log(err);
     res.status(500).send({ message: 'Internal Server Error' });
 });
 
