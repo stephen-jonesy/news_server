@@ -1,5 +1,5 @@
 const express = require("express");
-const { getTopics, getArticles, getArticleById, getUsers } = require("./controllers/app.controller");
+const { getTopics, getArticles, getArticleById, getCommentsByArticleId, postCommentById, getUsers } = require("./controllers/app.controller");
 
 const app = express();
 
@@ -11,17 +11,28 @@ app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticleById);
 
+app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+
+app.post('/api/articles/:article_id/comments', postCommentById)
+
+app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+
+app.post('/api/articles/:article_id/comments', postCommentById)
+
 app.get('/api/users', getUsers)
 
 app.use((err, req, res, next) => {
-    if (err.status === 404) {
+    if (err.status) {
       res.status(err.status).send({ message: err.message });
     } else next(err);
 });
   
 app.use((err, req, res, next) => {
-    if (err.code === '22P02') {
-      res.status(400).send({ message: 'Invalid input' });
+    if (err.code === '22P02' || err.code === "23502" ) {
+      res.status(400).send({ message: 'Bad request' });
+    }else if(err.code === "23503"){
+      res.status(404).send({ message: 'Not found' });
+
     } else next(err);
 });
   
