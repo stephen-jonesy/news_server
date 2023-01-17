@@ -43,3 +43,12 @@ exports.selectArticleById = (articleId) => {
 
     })
 }
+
+exports.selectUsers = () => {
+
+    const sqlString = `
+        SELECT * FROM users;
+    `
+    return db.query(sqlString);
+
+}

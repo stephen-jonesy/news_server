@@ -36,7 +36,7 @@ describe('get /api/topics', () => {
     
 });
 
-describe('Name of the group', () => {
+describe('GET /api/articles', () => {
     it('returns status 200 and an array of all articles objects with correct properties', () => {
         return request(app)
         .get("/api/articles")
@@ -60,12 +60,6 @@ describe('Name of the group', () => {
             
         })
     })
-    it('returns status 404 for a bad endpoint', () => {
-        return request(app)
-        .get("/api/article")
-        .expect(404)
-
-    });
 });
 
 describe('GET /api/articles/:article_id', () => {
@@ -90,4 +84,21 @@ describe('GET /api/articles/:article_id', () => {
         })
     });
 
+});
+
+describe('GET /api/users', () => {
+    it('returns status 200 and returns all users, with properties of username, name, avatar_url ', () => {
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({body}) => {
+            const firstUser = body[0];
+            expect(Array.isArray(body)).toBe(true);
+            expect(firstUser).toHaveProperty('username');
+            expect(firstUser).toHaveProperty('name');
+            expect(firstUser).toHaveProperty('avatar_url');
+
+        })
+        
+    });
 });

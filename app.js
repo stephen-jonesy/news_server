@@ -1,5 +1,5 @@
 const express = require("express");
-const { getTopics, getArticles, getArticleById } = require("./controllers/app.controller");
+const { getTopics, getArticles, getArticleById, getUsers } = require("./controllers/app.controller");
 
 const app = express();
 
@@ -11,6 +11,7 @@ app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticleById);
 
+app.get('/api/users', getUsers)
 
 app.use((err, req, res, next) => {
     if (err.status === 404) {
@@ -20,12 +21,12 @@ app.use((err, req, res, next) => {
   
 app.use((err, req, res, next) => {
     if (err.code === '22P02') {
-      res.status(400).send({ msg: 'Invalid input' });
+      res.status(400).send({ message: 'Invalid input' });
     } else next(err);
 });
   
 app.use((err, req, res, next) => {
-    res.status(500).send({ msg: 'Internal Server Error' });
+    res.status(500).send({ message: 'Internal Server Error' });
 });
 
 module.exports = app;

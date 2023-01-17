@@ -1,4 +1,4 @@
-const { selectTopics, selectArticles, selectArticleById } = require("../models/app.model")
+const { selectTopics, selectArticles, selectArticleById, selectUsers } = require("../models/app.model")
 
 exports.getTopics = (req, res, next) => {
 
@@ -32,4 +32,16 @@ exports.getArticleById = (req, res, next) => {
     .catch((err) => {
         next(err);
     })
+}
+
+exports.getUsers = (req, res, next) => {
+
+    return selectUsers()
+    .then(({rows}) => {
+        res.status(200).send(rows)
+    })
+    .catch((err) => {
+        next(err);
+    })
+
 }
