@@ -85,9 +85,74 @@ describe('GET /api/articles/:article_id', () => {
         .get("/api/articles/75")
         .expect(404)
         .then(({body}) => {
-            console.log(body.message);
             expect(body.message).toBe("Opps, article does not exist");
         })
     });
 
+});
+describe('PATCH /api/articles/:article_id', () => {
+    it('returns status 200 and updated article with new votes value', () => {
+        const returnedArticle = {
+            article_id: 1,
+            title: 'Living in the shadow of a great man',
+            topic: 'mitch',
+            author: 'butter_bridge',
+            body: 'I find this existence challenging',
+            created_at: "2020-07-09T20:11:00.000Z",            votes: 101,
+            article_img_url:
+              'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        }
+        return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then(({body}) => {
+            console.log(body);
+            expect(body[0]).toEqual(returnedArticle);
+
+        })
+    });
+    it('returns status 200 and returned object with result of negative number being taken away from votes property', () => {
+        const returnedArticle = {
+            article_id: 1,
+            title: 'Living in the shadow of a great man',
+            topic: 'mitch',
+            author: 'butter_bridge',
+            body: 'I find this existence challenging',
+            created_at: "2020-07-09T20:11:00.000Z",            
+            votes: -1,
+            article_img_url:
+              'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        }
+        return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: -101 })
+        .expect(200)
+        .then(({body}) => {
+            console.log(body);
+            expect(body[0]).toEqual(returnedArticle);
+
+        })
+    });
+    it('returns status 400 when sent an invalid data type', () => {
+        const returnedArticle = {
+            article_id: 1,
+            title: 'Living in the shadow of a great man',
+            topic: 'mitch',
+            author: 'butter_bridge',
+            body: 'I find this existence challenging',
+            created_at: "2020-07-09T20:11:00.000Z",            votes: 100,
+            article_img_url:
+              'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        }
+        return request(app)
+        .patch("/api/articles/1")
+        .send({ invalid: -10 })
+        .expect(400)
+        .then(({body}) => {
+            console.log(body);
+            expect(body.message).toBe('Invalid input');
+
+        })
+    });
 });
