@@ -132,7 +132,7 @@ describe('get  /api/articles/:article_id/comments', () => {
 });
 
 describe('PATCH /api/articles/:article_id', () => {
-    it.only('returns status 200 and updated article with new votes value', () => {
+    it('returns status 200 and updated article with new votes value', () => {
         const returnedArticle = {
             article_id: 1,
             title: 'Living in the shadow of a great man',
@@ -183,7 +183,7 @@ describe('PATCH /api/articles/:article_id', () => {
             topic: 'mitch',
             author: 'butter_bridge',
             body: 'I find this existence challenging',
-            created_at: "2020-07-09T20:11:00.000Z",            votes: 100,
+            created_at: "2020-07-09T20:11:00.000Z",            votes: 90,
             article_img_url:
               'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
         }
@@ -193,7 +193,7 @@ describe('PATCH /api/articles/:article_id', () => {
         .expect(400)
         .then(({body}) => {
             console.log(body);
-            expect(body.message).toBe('Invalid input');
+            expect(body.message).toBe('Bad request');
 
         })
     });
