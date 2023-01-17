@@ -68,7 +68,6 @@ exports.addCommentById = (articleId, {username, body}) => {
     
 }
 
-
 exports.patchArticleVotes = ({inc_votes}, articleId) => {
 
     const sqlString = `
@@ -85,3 +84,14 @@ exports.patchArticleVotes = ({inc_votes}, articleId) => {
 
     })
 }
+
+exports.selectUsers = () => {
+
+    const sqlString = `
+        SELECT * FROM users;
+    `
+    return db.query(sqlString);
+
+}
+
+
