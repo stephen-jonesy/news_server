@@ -131,7 +131,7 @@ describe('get  /api/articles/:article_id/comments', () => {
 
 });
 
-describe.only('PATCH /api/articles/:article_id', () => {
+describe('PATCH /api/articles/:article_id', () => {
     it.only('returns status 200 and updated article with new votes value', () => {
         const returnedArticle = {
             article_id: 1,
