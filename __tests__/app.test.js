@@ -13,7 +13,7 @@ afterAll(() => {
     return db.end();
 });
 
-describe('get /api/topics', () => {
+describe('GET /api/topics', () => {
     it('returns status 200 and an array of all topic objects with correct properties', () => {
         return request(app)
         .get("/api/topics")
@@ -91,35 +91,28 @@ describe('GET /api/articles/:article_id', () => {
 });
 
 
-describe('get  /api/articles/:article_id/comments', () => {
+describe('GET /api/articles/:article_id/comments', () => {
     it('returns status 200 and an array of corresponding comment objects for the given article_id ', () => {
         return request(app)
         .get("/api/articles/3/comments")
         .expect(200)
         .then(({body})=> {
             expect(Array.isArray(body)).toBe(true);
-            expect(body.length).toBe(2);
+            expect(body).toHaveLength(2);
             expect(body).toBeSortedBy("created_at", {
                 descending: true,
             });
-            body.forEach((comment) => {
-                expect(comment).toHaveProperty("comment_id");
-                expect(comment).toHaveProperty("votes");    
-                expect(comment).toHaveProperty("created_at");    
-                expect(comment).toHaveProperty("author");    
-                expect(comment).toHaveProperty("body");    
-                expect(comment).toHaveProperty("article_id");    
-
-            });            
-
-        })
-    });
-    it('Returns 200 status and a message for an article_id that does not correspond to any comments ', () => {
-        return request(app)
-        .get("/api/articles/2/comments")
-        .expect(200)
-        .then(({body}) => {
-            expect(body.message).toBe('No comments found');
+            if(body.length > 0){
+                body.forEach((comment) => {
+                    expect(comment).toHaveProperty("comment_id");
+                    expect(comment).toHaveProperty("votes");    
+                    expect(comment).toHaveProperty("created_at");    
+                    expect(comment).toHaveProperty("author");    
+                    expect(comment).toHaveProperty("body");    
+                    expect(comment).toHaveProperty("article_id");    
+    
+                });    
+            }        
         })
     });
     it('Returns 404 status and message when article does not exist ', () => {
@@ -130,7 +123,15 @@ describe('get  /api/articles/:article_id/comments', () => {
             expect(body.message).toBe('Opps, this article doesn\'t exist');
         })
     });
-    it('Returns 400 status and and a bad request message when passed wrong data type', () => {
+    it('Returns 200 status and a message for an article_id that does not correspond to any comments ', () => {
+        return request(app)
+        .get("/api/articles/2/comments")
+        .expect(200)
+        .then(({body}) => {
+            expect(body.message).toBe('No comments found');
+        })
+    });
+    it('Returns 400 status and and a bad request message when passed wrong data type for article_id', () => {
         return request(app)
         .get("/api/articles/baddata/comments")
         .expect(400)
@@ -156,5 +157,45 @@ describe('POST /api/articles/:article_id/comments', () => {
             const postedComment = body[0].body
             expect(postedComment).toBe('lorem ipsum');
         })
+    });
+    it('returns with a status: 400 when all necessary properties are not sent to the server', () => {
+        const comment = {
+            username: 'rogersop',
+        }
+        return request(app)
+        .post("/api/articles/1/comments")
+        .send(comment)
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.message).toBe("Bad request");
+        });
+    });
+    it('returns with 400 for an invalid data-type', () => {
+        const comment = {
+            stuff: 'bad data',
+            body: 'lorem ipsum'
+
+        }
+        return request(app)
+        .post("/api/articles/1/comments")
+        .send(comment)
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.message).toBe("Bad request");
+        });
+    });
+    it('returns with 404 if article does not exist', () => {
+        const comment = {
+            username: 'rogersop',
+            body: 'lorem ipsum'
+
+        }
+        return request(app)
+        .post("/api/articles/87/comments")
+        .send(comment)
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.message).toBe("Not found");
+        });
     });
 });
