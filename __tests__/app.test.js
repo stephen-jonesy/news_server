@@ -35,7 +35,6 @@ describe('get /api/topics', () => {
     });
     
 });
-
 describe('Name of the group', () => {
     it('returns status 200 and an array of all articles objects with correct properties', () => {
         return request(app)
@@ -90,15 +89,58 @@ describe('GET /api/articles/:article_id', () => {
     });
 
 });
-describe('PATCH /api/articles/:article_id', () => {
-    it('returns status 200 and updated article with new votes value', () => {
+
+
+describe('get  /api/articles/:article_id/comments', () => {
+    it('returns status 200 and an array of corresponding comment objects for the given article_id ', () => {
+        return request(app)
+        .get("/api/articles/3/comments")
+        .expect(200)
+        .then(({body})=> {
+            expect(Array.isArray(body)).toBe(true);
+            expect(body.length).toBe(2);
+            body.forEach((comment) => {
+                expect(comment).toHaveProperty("comment_id");
+                expect(comment).toHaveProperty("votes");    
+                expect(comment).toHaveProperty("created_at");    
+                expect(comment).toHaveProperty("author");    
+                expect(comment).toHaveProperty("body");    
+                expect(comment).toHaveProperty("article_id");    
+
+            });            
+
+        })
+    });
+    it('Returns 404 status and a message for an article_id that does not correspond to any comments ', () => {
+        return request(app)
+        .get("/api/articles/75/comments")
+        .expect(404)
+        .then(({body}) => {
+            console.log(body.message);
+            expect(body.message).toBe('Opps, no comments found');
+        })
+    });
+    it('Returns 400 status and and a bad request message when passed wrong data type', () => {
+        return request(app)
+        .get("/api/articles/baddata/comments")
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toBe('Bad request');
+        })
+    });
+
+});
+
+describe.only('PATCH /api/articles/:article_id', () => {
+    it.only('returns status 200 and updated article with new votes value', () => {
         const returnedArticle = {
             article_id: 1,
             title: 'Living in the shadow of a great man',
             topic: 'mitch',
             author: 'butter_bridge',
             body: 'I find this existence challenging',
-            created_at: "2020-07-09T20:11:00.000Z",            votes: 101,
+            created_at: "2020-07-09T20:11:00.000Z",            
+            votes: 101,
             article_img_url:
               'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
         }
