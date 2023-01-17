@@ -1,4 +1,4 @@
-const { selectTopics, selectArticles, selectArticleById, selectCommentsByArticleId, patchArticleVotes } = require("../models/app.model")
+const { selectTopics, selectArticles, selectArticleById, selectCommentsByArticleId, addCommentById, patchArticleVotes } = require("../models/app.model")
 
 exports.getTopics = (req, res, next) => {
 
@@ -37,13 +37,37 @@ exports.getArticleById = (req, res, next) => {
 exports.getCommentsByArticleId = (req, res, next) => {
 
     const articleId = req.params.article_id;
-    return selectCommentsByArticleId(articleId)
-    .then(({rows}) => {
-        res.status(200).send(rows)
+
+    return Promise.all([selectCommentsByArticleId(articleId), selectArticleById(articleId)])
+    .then((data) => {
+        const {rows} = data[0];
+        if (!rows.length) {
+            res.status(200).send({message: 'No comments found'})
+
+        }
+        else {
+            res.status(200).send(rows)
+
+        }
+
     })
     .catch((err) => {
         next(err);
     })
+
+}
+
+exports.postCommentById = (req, res, next) => {
+    const articleId = req.params.article_id;
+    const { body } = req;
+
+    return addCommentById(articleId, body)
+    .then(({rows}) => {
+        res.status(201).send(rows)
+    })
+    .catch((err) => {
+        next(err);
+    });
 }
 
 exports.updateArticleVotes = (req, res, next) => {
