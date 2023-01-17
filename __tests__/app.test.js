@@ -70,7 +70,6 @@ describe('GET /api/articles', () => {
         .get("/api/articles?topic=cats")
         .expect(200)
         .then(({body}) => {
-            console.log(body);
             expect(body.articles[0]).toHaveProperty('topic', 'cats')
         })
     });
