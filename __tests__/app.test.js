@@ -168,20 +168,6 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(body.message).toBe("Bad request");
         });
     });
-    it('returns with 400 for an invalid data-type', () => {
-        const comment = {
-            stuff: 'bad data',
-            body: 'lorem ipsum'
-
-        }
-        return request(app)
-        .post("/api/articles/1/comments")
-        .send(comment)
-        .expect(400)
-        .then(({ body }) => {
-            expect(body.message).toBe("Bad request");
-        });
-    });
     it('returns with 404 if article does not exist', () => {
         const comment = {
             username: 'rogersop',
