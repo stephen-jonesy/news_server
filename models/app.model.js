@@ -81,7 +81,6 @@ exports.patchArticleVotes = ({inc_votes}, articleId) => {
 
     return db.query(sqlString, [inc_votes, articleId])
     .then((data) => {
-        console.log(data);
         return data;
 
     })

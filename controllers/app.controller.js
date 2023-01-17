@@ -73,7 +73,6 @@ exports.postCommentById = (req, res, next) => {
 exports.updateArticleVotes = (req, res, next) => {
     const articleId = req.params.article_id;
     const body = req.body;
-    console.log(articleId);
 
     return patchArticleVotes(body, articleId)
     .then(({rows}) => {
