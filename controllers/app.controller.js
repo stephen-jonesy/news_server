@@ -29,8 +29,7 @@ exports.getArticleById = (req, res, next) => {
     const articleId = req.params.article_id;
     return selectArticleById(articleId)
     .then(({rows}) => {
-        const article = rows;
-        res.status(200).send({article})
+        res.status(200).send({article: rows[0]})
     })
     .catch((err) => {
         next(err);
@@ -66,7 +65,7 @@ exports.postCommentById = (req, res, next) => {
 
     return addCommentById(articleId, body)
     .then(({rows}) => {
-        res.status(201).send({comment:rows})
+        res.status(201).send({comment:rows[0]})
     })
     .catch((err) => {
         next(err);

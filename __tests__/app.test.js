@@ -21,11 +21,8 @@ describe('GET /api/topics', () => {
         .then(({body})=> {
             const topics = body.topics;
             expect(Array.isArray(topics)).toBe(true);
-            topics.forEach((topic) => {
-                expect(topic).toHaveProperty("description");
-                expect(topic).toHaveProperty("slug");    
-                    
-            });
+            expect(topics.length).toBe(3);
+
         })
     });
     it('returns status 404 for a bad endpoint', () => {
@@ -47,6 +44,7 @@ describe('GET /api/articles', () => {
             expect(articles).toBeSortedBy("created_at", {
                 descending: true,
             });
+            expect(articles).toHaveLength(5);
             articles.forEach((article) => {
                 expect(article).toHaveProperty("author");
                 expect(article).toHaveProperty("title");   
@@ -76,7 +74,8 @@ describe('GET /api/articles/:article_id', () => {
         .get("/api/articles/2")
         .expect(200)
         .then(({body}) => {
-            const article = body.article[0];
+            console.log(body.article);
+            const article = body.article;
             expect(article instanceof Object).toBe(true);
             expect(article).toHaveProperty('article_id', 2);
             expect(article).toHaveProperty('title', 'Sony Vaio; or, The Laptop');
@@ -106,17 +105,15 @@ describe('GET /api/articles/:article_id/comments', () => {
             expect(comments).toBeSortedBy("created_at", {
                 descending: true,
             });
-            if(comments.length > 0){
-                comments.forEach((comment) => {
-                    expect(comment).toHaveProperty("comment_id");
-                    expect(comment).toHaveProperty("votes");    
-                    expect(comment).toHaveProperty("created_at");    
-                    expect(comment).toHaveProperty("author");    
-                    expect(comment).toHaveProperty("body");    
-                    expect(comment).toHaveProperty("article_id");    
-    
-                });    
-            }        
+            comments.forEach((comment) => {
+                expect(comment).toHaveProperty("comment_id");
+                expect(comment).toHaveProperty("votes");    
+                expect(comment).toHaveProperty("created_at");    
+                expect(comment).toHaveProperty("author");    
+                expect(comment).toHaveProperty("body");    
+                expect(comment).toHaveProperty("article_id");    
+
+            });    
         })
     });
     it('Returns 404 status and message when article does not exist ', () => {
@@ -158,8 +155,8 @@ describe('POST /api/articles/:article_id/comments', () => {
         .send(comment)
         .expect(201)
         .then(({body})=> {
-            const comment = body.comment;
-            const postedComment = comment[0].body
+            const postedComment = body.comment.body
+            console.log(postedComment);
             expect(postedComment).toBe('lorem ipsum');
         })
     });
@@ -191,117 +188,6 @@ describe('POST /api/articles/:article_id/comments', () => {
     });
 });
 
-
-describe('GET /api/articles/:article_id/comments', () => {
-    it('returns status 200 and an array of corresponding comment objects for the given article_id ', () => {
-        return request(app)
-        .get("/api/articles/3/comments")
-        .expect(200)
-        .then(({body})=> {
-            const comments = body.comments;
-            expect(Array.isArray(comments)).toBe(true);
-            expect(comments).toHaveLength(2);
-            expect(comments).toBeSortedBy("created_at", {
-                descending: true,
-            });
-            if(comments.length > 0){
-                comments.forEach((comment) => {
-                    expect(comment).toHaveProperty("comment_id");
-                    expect(comment).toHaveProperty("votes");    
-                    expect(comment).toHaveProperty("created_at");    
-                    expect(comment).toHaveProperty("author");    
-                    expect(comment).toHaveProperty("body");    
-                    expect(comment).toHaveProperty("article_id");    
-    
-                });    
-            }        
-        })
-    });
-    it('Returns 404 status and message when article does not exist ', () => {
-        return request(app)
-        .get("/api/articles/77/comments")
-        .expect(404)
-        .then(({body}) => {
-            expect(body.message).toBe('Opps, article does not exist');
-        })
-    });
-    it('Returns 200 status and a message for an article_id that does not correspond to any comments ', () => {
-        return request(app)
-        .get("/api/articles/2/comments")
-        .expect(200)
-        .then(({body}) => {
-            expect(body.message).toBe('No comments found');
-        })
-    });
-    it('Returns 400 status and and a bad request message when passed wrong data type for article_id', () => {
-        return request(app)
-        .get("/api/articles/baddata/comments")
-        .expect(400)
-        .then(({body}) => {
-            expect(body.message).toBe('Bad request');
-        })
-    });
-
-});
-
-
-describe('POST /api/articles/:article_id/comments', () => {
-    it('returns with a status: 201 and responds with the posted comment', () => {
-        const comment = {
-            username: 'rogersop',
-            body: 'lorem ipsum'
-        }
-        return request(app)
-        .post("/api/articles/1/comments")
-        .send(comment)
-        .expect(201)
-        .then(({body})=> {
-            const comment = body.comment
-            const postedComment = comment[0].body
-            expect(postedComment).toBe('lorem ipsum');
-        })
-    });
-    it('returns with a status: 400 when all necessary properties are not sent to the server', () => {
-        const comment = {
-            username: 'rogersop',
-        }
-        return request(app)
-        .post("/api/articles/1/comments")
-        .send(comment)
-        .expect(400)
-        .then(({ body }) => {
-            expect(body.message).toBe("Bad request");
-        });
-    });
-    it('returns with 400 for an invalid data-type', () => {
-        const comment = {
-            stuff: 'bad data',
-            body: 'lorem ipsum'
-
-        }
-        return request(app)
-        .post("/api/articles/1/comments")
-        .send(comment)
-        .expect(400)
-        .then(({ body }) => {
-            expect(body.message).toBe("Bad request");
-        });
-    });
-    it('returns with 404 if article does not exist', () => {
-        const comment = {
-            username: 'rogersop',
-            body: 'lorem ipsum'
-
-        }
-        return request(app)
-        .post("/api/articles/87/comments")
-        .send(comment)
-        .expect(404)
-        .then(({ body }) => {
-            expect(body.message).toBe("Not found");
-        });
-    });
-});
 describe('PATCH /api/articles/:article_id', () => {
     it('returns status 200 and updated article with new votes value', () => {
         const returnedArticle = {
@@ -353,13 +239,15 @@ describe('GET /api/users', () => {
         .get('/api/users')
         .expect(200)
         .then(({body}) => {
-            const firstUser = body.users[0];
-            expect(Array.isArray(body.users)).toBe(true);
-            expect(firstUser).toHaveProperty('username');
-            expect(firstUser).toHaveProperty('name');
-            expect(firstUser).toHaveProperty('avatar_url');
+            const users = body.users;
+            expect(users).toHaveLength(4);
+            expect(Array.isArray(users)).toBe(true);
+            users.forEach((user) => {
+                expect(user).toHaveProperty("username");
+                expect(user).toHaveProperty("name");    
+                expect(user).toHaveProperty("avatar_url");      
 
+            });    
         })
-        
     });
 });
