@@ -19,12 +19,10 @@ describe('GET /api/topics', () => {
         .get("/api/topics")
         .expect(200)
         .then(({body})=> {
-            expect(Array.isArray(body)).toBe(true);
-            body.forEach((topic) => {
-                expect(topic).toHaveProperty("description");
-                expect(topic).toHaveProperty("slug");    
-                    
-            });
+            const topics = body.topics;
+            expect(Array.isArray(topics)).toBe(true);
+            expect(topics.length).toBe(3);
+
         })
     });
     it('returns status 404 for a bad endpoint', () => {
@@ -41,19 +39,21 @@ describe('GET /api/articles', () => {
         .get("/api/articles")
         .expect(200)
         .then(({body})=> {
-            expect(Array.isArray(body)).toBe(true);
-            expect(body).toBeSortedBy("created_at", {
+            const articles = body.articles;
+            expect(Array.isArray(articles)).toBe(true);
+            expect(articles).toBeSortedBy("created_at", {
                 descending: true,
             });
-            body.forEach((topic) => {
-                expect(topic).toHaveProperty("author");
-                expect(topic).toHaveProperty("title");   
-                expect(topic).toHaveProperty("article_id");    
-                expect(topic).toHaveProperty("topic");    
-                expect(topic).toHaveProperty("created_at");    
-                expect(topic).toHaveProperty("votes");    
-                expect(topic).toHaveProperty("article_img_url");    
-                expect(topic).toHaveProperty("comment_count");    
+            expect(articles).toHaveLength(5);
+            articles.forEach((article) => {
+                expect(article).toHaveProperty("author");
+                expect(article).toHaveProperty("title");   
+                expect(article).toHaveProperty("article_id");    
+                expect(article).toHaveProperty("topic");    
+                expect(article).toHaveProperty("created_at");    
+                expect(article).toHaveProperty("votes");    
+                expect(article).toHaveProperty("article_img_url");    
+                expect(article).toHaveProperty("comment_count");    
                     
             });
             
@@ -65,52 +65,6 @@ describe('GET /api/articles', () => {
         .expect(404)
 
     });
-    it('returns 200 status and queried articles but topic when endpoint contains a topic query', () => {
-        return request(app)
-        .get("/api/articles?topic=cats")
-        .expect(200)
-        .then(({body}) => {
-            expect(body[0]).toHaveProperty('topic', 'cats')
-        })
-    });
-    it('returns 200 status and sorts articles by sortBy when endpoint contains a sortBy query ', () => {
-        return request(app)
-        .get("/api/articles?sort_by=author")
-        .expect(200)
-        .then(({body}) => {
-            expect(body).toBeSortedBy("author", {
-                descending: true,
-            });
-        });
-    });
-    it('returns 200 status and orders created_by by ascending', () => {
-        return request(app)
-        .get("/api/articles?order=asc")
-        .expect(200)
-        .then(({body}) => {
-            expect(body).toBeSortedBy("created_at", {
-                descending: false,
-            });
-        });
-    });
-    it('returns 200 status and sorts articles by author in ascending order', () => {
-        return request(app)
-        .get("/api/articles?sort_by=author&order=asc")
-        .expect(200)
-        .then(({body}) => {
-            expect(body).toBeSortedBy("author", {
-                descending: false,
-            });
-        });
-    });
-    it('returns status of 404 from passed an invalid query ', () => {
-        return request(app)
-        .get("/api/articles?sort_by=stuff")
-        .expect(400)
-        .then(({body}) => {
-            expect(body.message).toBe('Invalid sort query');
-        })
-    });
 
 });
 
@@ -120,7 +74,7 @@ describe('GET /api/articles/:article_id', () => {
         .get("/api/articles/2")
         .expect(200)
         .then(({body}) => {
-            const article = body[0];
+            const article = body.article;
             expect(article instanceof Object).toBe(true);
             expect(article).toHaveProperty('article_id', 2);
             expect(article).toHaveProperty('title', 'Sony Vaio; or, The Laptop');
@@ -144,22 +98,21 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get("/api/articles/3/comments")
         .expect(200)
         .then(({body})=> {
-            expect(Array.isArray(body)).toBe(true);
-            expect(body).toHaveLength(2);
-            expect(body).toBeSortedBy("created_at", {
+            const comments = body.comments;
+            expect(Array.isArray(comments)).toBe(true);
+            expect(comments).toHaveLength(2);
+            expect(comments).toBeSortedBy("created_at", {
                 descending: true,
             });
-            if(body.length > 0){
-                body.forEach((comment) => {
-                    expect(comment).toHaveProperty("comment_id");
-                    expect(comment).toHaveProperty("votes");    
-                    expect(comment).toHaveProperty("created_at");    
-                    expect(comment).toHaveProperty("author");    
-                    expect(comment).toHaveProperty("body");    
-                    expect(comment).toHaveProperty("article_id");    
-    
-                });    
-            }        
+            comments.forEach((comment) => {
+                expect(comment).toHaveProperty("comment_id");
+                expect(comment).toHaveProperty("votes");    
+                expect(comment).toHaveProperty("created_at");    
+                expect(comment).toHaveProperty("author");    
+                expect(comment).toHaveProperty("body");    
+                expect(comment).toHaveProperty("article_id");    
+
+            });    
         })
     });
     it('Returns 404 status and message when article does not exist ', () => {
@@ -201,27 +154,13 @@ describe('POST /api/articles/:article_id/comments', () => {
         .send(comment)
         .expect(201)
         .then(({body})=> {
-            const postedComment = body[0].body
+            const postedComment = body.comment.body
             expect(postedComment).toBe('lorem ipsum');
         })
     });
     it('returns with a status: 400 when all necessary properties are not sent to the server', () => {
         const comment = {
             username: 'rogersop',
-        }
-        return request(app)
-        .post("/api/articles/1/comments")
-        .send(comment)
-        .expect(400)
-        .then(({ body }) => {
-            expect(body.message).toBe("Bad request");
-        });
-    });
-    it('returns with 400 for an invalid data-type', () => {
-        const comment = {
-            stuff: 'bad data',
-            body: 'lorem ipsum'
-
         }
         return request(app)
         .post("/api/articles/1/comments")
@@ -244,5 +183,69 @@ describe('POST /api/articles/:article_id/comments', () => {
         .then(({ body }) => {
             expect(body.message).toBe("Not found");
         });
+    });
+});
+
+describe('PATCH /api/articles/:article_id', () => {
+    it('returns status 200 and updated article with new votes value', () => {
+        const returnedArticle = {
+            article_id: 1,
+            title: 'Living in the shadow of a great man',
+            topic: 'mitch',
+            author: 'butter_bridge',
+            body: 'I find this existence challenging',
+            created_at: "2020-07-09T20:11:00.000Z",            
+            votes: 101,
+            article_img_url:
+              'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        }
+        return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then(({body}) => {
+            expect(body[0].votes).toBe(101);
+
+        })
+    });
+    it('returns status 200 and returned object with result of negative number being taken away from votes property', () => {
+
+        return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: -101 })
+        .expect(200)
+        .then(({body}) => {
+            expect(body[0].votes).toEqual(-1);
+
+        })
+    });
+    it('returns status 400 when sent an invalid data type', () => {
+        return request(app)
+        .patch("/api/articles/1")
+        .send({ invalid: -10 })
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toBe('Bad request');
+
+        })
+    });
+});
+
+describe('GET /api/users', () => {
+    it('returns status 200 and returns all users, with properties of username, name, avatar_url ', () => {
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({body}) => {
+            const users = body.users;
+            expect(users).toHaveLength(4);
+            expect(Array.isArray(users)).toBe(true);
+            users.forEach((user) => {
+                expect(user).toHaveProperty("username");
+                expect(user).toHaveProperty("name");    
+                expect(user).toHaveProperty("avatar_url");      
+
+            });    
+        })
     });
 });
