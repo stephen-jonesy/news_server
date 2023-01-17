@@ -50,25 +50,10 @@ exports.selectCommentsByArticleId = (articleId) => {
         SELECT * FROM comments
         where comments.article_id = $1
         ORDER BY created_at DESC;
-    `
-    const sqlArticles  = `
-        SELECT * FROM articles
-        where article_id = $1;
-    `
+    `;
 
     return db.query(sqlComments,[articleId])
     .then((data)=> {
-        if (!data.rows.length) {
-            return db.query(sqlArticles,[articleId])
-            .then((data) => {
-                if (!data.rows.length) {
-                    return Promise.reject({ status: 404, message: "Opps, this article doesn't exist" })
-
-                }
-                return [];
-            })
-
-        }
         return data;
     })
 }

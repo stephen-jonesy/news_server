@@ -37,10 +37,11 @@ exports.getArticleById = (req, res, next) => {
 exports.getCommentsByArticleId = (req, res, next) => {
 
     const articleId = req.params.article_id;
-    return selectCommentsByArticleId(articleId)
-    .then(({rows}) => {
-        console.log(rows);
-        if (!rows) {
+
+    return Promise.all([selectCommentsByArticleId(articleId), selectArticleById(articleId)])
+    .then((data) => {
+        const {rows} = data[0];
+        if (!rows.length) {
             res.status(200).send({message: 'No comments found'})
 
         }
@@ -48,10 +49,12 @@ exports.getCommentsByArticleId = (req, res, next) => {
             res.status(200).send(rows)
 
         }
+
     })
     .catch((err) => {
         next(err);
     })
+
 }
 
 exports.postCommentById = (req, res, next) => {

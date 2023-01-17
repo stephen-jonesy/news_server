@@ -120,7 +120,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get("/api/articles/77/comments")
         .expect(404)
         .then(({body}) => {
-            expect(body.message).toBe('Opps, this article doesn\'t exist');
+            expect(body.message).toBe('Opps, article does not exist');
         })
     });
     it('Returns 200 status and a message for an article_id that does not correspond to any comments ', () => {
@@ -128,6 +128,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get("/api/articles/2/comments")
         .expect(200)
         .then(({body}) => {
+            console.log(body);
             expect(body.message).toBe('No comments found');
         })
     });
