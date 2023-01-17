@@ -13,7 +13,6 @@ exports.getTopics = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    console.log(req.query);
     return selectArticles(req.query)
     .then(({rows}) => {
         res.status(200).send(rows)
