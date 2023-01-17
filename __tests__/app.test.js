@@ -61,6 +61,13 @@ describe('GET /api/articles', () => {
             
         })
     })
+    it('returns status 404 for a bad endpoint', () => {
+        return request(app)
+        .get("/api/article")
+        .expect(404)
+
+    });
+
 });
 
 describe('GET /api/articles/:article_id', () => {
@@ -293,6 +300,50 @@ describe('POST /api/articles/:article_id/comments', () => {
         .then(({ body }) => {
             expect(body.message).toBe("Not found");
         });
+    });
+});
+describe('PATCH /api/articles/:article_id', () => {
+    it('returns status 200 and updated article with new votes value', () => {
+        const returnedArticle = {
+            article_id: 1,
+            title: 'Living in the shadow of a great man',
+            topic: 'mitch',
+            author: 'butter_bridge',
+            body: 'I find this existence challenging',
+            created_at: "2020-07-09T20:11:00.000Z",            
+            votes: 101,
+            article_img_url:
+              'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        }
+        return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then(({body}) => {
+            expect(body[0].votes).toBe(101);
+
+        })
+    });
+    it('returns status 200 and returned object with result of negative number being taken away from votes property', () => {
+
+        return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: -101 })
+        .expect(200)
+        .then(({body}) => {
+            expect(body[0].votes).toEqual(-1);
+
+        })
+    });
+    it('returns status 400 when sent an invalid data type', () => {
+        return request(app)
+        .patch("/api/articles/1")
+        .send({ invalid: -10 })
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toBe('Bad request');
+
+        })
     });
 });
 

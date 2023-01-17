@@ -68,6 +68,22 @@ exports.addCommentById = (articleId, {username, body}) => {
     
 }
 
+exports.patchArticleVotes = ({inc_votes}, articleId) => {
+
+    const sqlString = `
+        UPDATE articles
+        SET votes = votes + $1
+        WHERE article_id = $2
+        returning *;
+    
+    `;
+
+    return db.query(sqlString, [inc_votes, articleId])
+    .then((data) => {
+        return data;
+
+    })
+}
 
 exports.selectUsers = () => {
 
@@ -77,3 +93,5 @@ exports.selectUsers = () => {
     return db.query(sqlString);
 
 }
+
+
