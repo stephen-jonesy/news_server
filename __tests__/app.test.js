@@ -74,7 +74,6 @@ describe('GET /api/articles/:article_id', () => {
         .get("/api/articles/2")
         .expect(200)
         .then(({body}) => {
-            console.log(body.article);
             const article = body.article;
             expect(article instanceof Object).toBe(true);
             expect(article).toHaveProperty('article_id', 2);
@@ -156,7 +155,6 @@ describe('POST /api/articles/:article_id/comments', () => {
         .expect(201)
         .then(({body})=> {
             const postedComment = body.comment.body
-            console.log(postedComment);
             expect(postedComment).toBe('lorem ipsum');
         })
     });
