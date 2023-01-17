@@ -65,6 +65,7 @@ describe('GET /api/articles', () => {
         .expect(404)
 
     });
+
 });
 
 describe('GET /api/articles/:article_id', () => {
