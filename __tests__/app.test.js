@@ -103,7 +103,15 @@ describe('GET /api/articles', () => {
             });
         });
     });
-    it('returns status of 404 from passed an invalid query ', () => {
+    it('returns 404 and message if topic category doesn\'t exist', () => {
+        return request(app)
+        .get("/api/articles?topic=stuff")
+        .expect(404)
+        .then(({body}) => {
+            expect(body.message).toBe('Article doesn\'t exist');
+        })
+    });
+    it('returns status of 400 and error message when passed an invalid query ', () => {
         return request(app)
         .get("/api/articles?sort_by=stuff")
         .expect(400)
@@ -111,6 +119,7 @@ describe('GET /api/articles', () => {
             expect(body.message).toBe('Invalid sort query');
         })
     });
+
 });
 
 describe('GET /api/articles/:article_id', () => {
