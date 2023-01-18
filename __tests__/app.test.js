@@ -216,6 +216,7 @@ describe('PATCH /api/articles/:article_id', () => {
             
             expect(comment).toEqual(
                 expect.objectContaining({
+                    article_id: 1,
                     votes: -1
                 })
             );
