@@ -196,7 +196,7 @@ describe('PATCH /api/articles/:article_id', () => {
         .send({ inc_votes: 1 })
         .expect(200)
         .then(({body}) => {
-            expect(body.comment).toEqual(
+            expect(body.article).toEqual(
                 expect.objectContaining({
                     article_id: 1,
                     votes: 101
@@ -212,9 +212,8 @@ describe('PATCH /api/articles/:article_id', () => {
         .send({ inc_votes: -101 })
         .expect(200)
         .then(({body}) => {
-            const comment = body.comment;
             
-            expect(comment).toEqual(
+            expect(body.article).toEqual(
                 expect.objectContaining({
                     article_id: 1,
                     votes: -1

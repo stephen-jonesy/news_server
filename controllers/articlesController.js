@@ -34,7 +34,7 @@ exports.updateArticleVotes = (req, res, next) => {
     
     return patchArticleVotes(body, articleId)
     .then(({rows}) => {
-        res.status(200).send({comment: rows[0]})
+        res.status(200).send({article: rows[0]})
     })
     .catch((err) => {
         next(err);
