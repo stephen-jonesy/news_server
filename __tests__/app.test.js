@@ -204,7 +204,7 @@ describe('PATCH /api/articles/:article_id', () => {
         .send({ inc_votes: 1 })
         .expect(200)
         .then(({body}) => {
-            expect(body[0].votes).toBe(101);
+            expect(body.article.votes).toBe(101);
 
         })
     });
@@ -215,7 +215,8 @@ describe('PATCH /api/articles/:article_id', () => {
         .send({ inc_votes: -101 })
         .expect(200)
         .then(({body}) => {
-            expect(body[0].votes).toEqual(-1);
+            console.log(body.article);
+            expect(body.article.votes).toEqual(-1);
 
         })
     });
