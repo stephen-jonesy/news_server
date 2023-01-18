@@ -249,3 +249,30 @@ describe('GET /api/users', () => {
         })
     });
 });
+
+describe('DELETE /api/comments/:comment_id', () => {
+    it('returns status of 204 when sent the correct id and comment is removed from the comments table', () => {
+        return request(app)
+        .delete('/api/comments/1')
+        .expect(204)
+
+    });
+    it('returns status 404 when comment_id does not exist', () => {
+        return request(app)
+        .delete('/api/comments/1000')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.message).toBe('Opps, comment does not exist');
+        })
+
+    });
+    it('returns status 404 when comment_id does not exist', () => {
+        return request(app)
+        .delete('/api/comments/stuff')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toBe('Bad request');
+        })
+
+    });
+});

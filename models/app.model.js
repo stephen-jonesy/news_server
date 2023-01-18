@@ -94,4 +94,20 @@ exports.selectUsers = () => {
 
 }
 
+exports.deleteCommentById = (comment_id) => {
+    console.log(comment_id, '<< in model');
+    const sqlString = `
+        DELETE FROM comments WHERE comment_id = $1
+        returning *;
+    `;
+
+    return db.query(sqlString, [comment_id])
+    .then((data) => {
+        if (!data.rows.length) {
+            return Promise.reject({ status: 404, message: "Opps, comment does not exist" })
+        }
+        return data
+    })
+
+}
 

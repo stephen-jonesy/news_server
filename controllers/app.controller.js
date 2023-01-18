@@ -1,4 +1,4 @@
-const { selectTopics, selectArticles, selectArticleById, selectCommentsByArticleId, addCommentById, patchArticleVotes, selectUsers } = require("../models/app.model")
+const { selectTopics, selectArticles, selectArticleById, selectCommentsByArticleId, addCommentById, patchArticleVotes, selectUsers, deleteCommentById } = require("../models/app.model")
 
 exports.getTopics = (req, res, next) => {
 
@@ -96,4 +96,18 @@ exports.getUsers = (req, res, next) => {
         next(err);
     })
 
+}
+
+exports.removeCommentById = (req, res, next) => {
+
+    const {comment_id} = req.params;
+    console.log(comment_id);
+    return deleteCommentById(comment_id)
+    .then(() => {
+        res.status(204).send();
+    })
+    .catch((err) => {
+
+        next(err);
+    })
 }
