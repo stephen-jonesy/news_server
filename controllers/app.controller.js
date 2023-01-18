@@ -97,5 +97,3 @@ exports.getUsers = (req, res, next) => {
     })
 
 }
-
-//testing github PR updates with new commit
