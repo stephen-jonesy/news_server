@@ -78,7 +78,6 @@ describe('GET /api/articles/:article_id', () => {
             expect(article instanceof Object).toBe(true);
             expect(article).toHaveProperty('article_id', 2);
             expect(article).toHaveProperty('title', 'Sony Vaio; or, The Laptop');
-            expect(article).toHaveProperty('comment_count', '0');
 
         })
     });
@@ -89,6 +88,17 @@ describe('GET /api/articles/:article_id', () => {
         .then(({body}) => {
             expect(body.message).toBe("Opps, article does not exist");
         })
+    });
+    it('returns status of 200 with a comment_count property ', () => {
+        return request(app)
+        .get("/api/articles/2")
+        .expect(200)
+        .then(({body}) => {
+            const article = body.article;
+            expect(article).toHaveProperty('comment_count', '0');
+
+        })
+
     });
 
 });
