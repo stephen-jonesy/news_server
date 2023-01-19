@@ -3,7 +3,7 @@ const db = require('../db/connection')
 exports.selectCommentsByArticleId = (articleId) => {
     const sqlComments = `
         SELECT * FROM comments
-        where comments.article_id = $1
+        WHERE comments.article_id = $1
         ORDER BY created_at DESC;
     `;
     console.log('model');

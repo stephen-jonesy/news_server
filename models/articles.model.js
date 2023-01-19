@@ -2,7 +2,7 @@ const db = require('../db/connection')
 
 exports.selectArticles = () => {
     const sqlString = `
-        SELECT articles.*, COUNT(comments.article_id) as comment_count 
+        SELECT articles.*, COUNT(comments.article_id) AS comment_count 
         FROM articles
         JOIN comments
         ON articles.article_id = comments.article_id
