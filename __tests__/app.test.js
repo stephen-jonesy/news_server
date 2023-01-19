@@ -70,8 +70,15 @@ describe('GET /api/articles', () => {
         .get("/api/articles?topic=cats")
         .expect(200)
         .then(({body}) => {
-            expect(body.articles[0]).toHaveProperty('topic', 'cats')
-        })
+            expect(body.articles.length > 0).toBe(true)
+            body.articles.forEach((article)=> {
+                expect(article).toEqual(
+                    expect.objectContaining({topic: 'cats'})
+    
+                );
+            });
+
+        });
     });
     it('returns 200 status and sorts articles by sortBy when endpoint contains a sortBy query ', () => {
         return request(app)
@@ -111,12 +118,20 @@ describe('GET /api/articles', () => {
             expect(body.message).toBe('Article doesn\'t exist');
         })
     });
-    it('returns status of 400 and error message when passed an invalid query ', () => {
+    it('returns status of 400 and error message when passed an invalid sort_by query ', () => {
         return request(app)
         .get("/api/articles?sort_by=stuff")
         .expect(400)
         .then(({body}) => {
             expect(body.message).toBe('Invalid sort query');
+        })
+    });
+    it('returns status of 400 and error message when passed an invalid order query ', () => {
+        return request(app)
+        .get("/api/articles?order=stuff")
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toBe('Invalid order query');
         })
     });
 
