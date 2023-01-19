@@ -345,7 +345,13 @@ describe('DELETE /api/comments/:comment_id', () => {
         return request(app)
         .delete('/api/comments/1')
         .expect(204)
+        .then(() => {
+            db.query('SELECT * FROM comments WHERE comment_id = 1;')
+            .then((result) => {
+                expect(result.rows).toHaveLength(0)
 
+            })
+        })
     });
     it('returns status 404 when comment_id does not exist', () => {
         return request(app)
