@@ -226,16 +226,16 @@ describe('GET /api/articles/:article_id/comments', () => {
 
 describe('POST /api/articles/:article_id/comments', () => {
     it('returns with a status: 201 and responds with the posted comment', () => {
-        const comment = {
+        const sendComment = {
             username: 'rogersop',
             body: 'lorem ipsum'
         }
         return request(app)
         .post("/api/articles/1/comments")
-        .send(comment)
+        .send(sendComment)
         .expect(201)
         .then(({body})=> {
-            const postedComment = body.comment.body
+            const postedComment = body.body;
             expect(postedComment).toBe('lorem ipsum');
         })
     });

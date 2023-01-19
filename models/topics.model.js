@@ -4,5 +4,8 @@ exports.selectTopics = () => {
     const sqlString = `
         SELECT * FROM topics;
     `;
-    return db.query(sqlString);
+    return db.query(sqlString)
+    .then(({rows}) => {
+        return rows;
+    })
 };

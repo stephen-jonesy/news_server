@@ -7,13 +7,13 @@ exports.getCommentsByArticleId = (req, res, next) => {
 
     return Promise.all([selectCommentsByArticleId(articleId), selectArticleById(articleId)])
     .then((data) => {
-        const {rows} = data[0];
-        if (!rows.length) {
+        const comments = data[0];
+        if (!comments.length) {
             res.status(200).send({message: 'No comments found'})
 
         }
         else {
-            res.status(200).send({comments: rows})
+            res.status(200).send({comments})
 
         }
 
@@ -30,8 +30,8 @@ exports.postCommentById = (req, res, next) => {
     const { body } = req;
     
     return addCommentById(articleId, body)
-    .then(({rows}) => {
-        res.status(201).send({comment:rows[0]})
+    .then((comment) => {
+        res.status(201).send(comment);
     })
     .catch((err) => {
         next(err);

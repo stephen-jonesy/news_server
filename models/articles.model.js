@@ -33,14 +33,14 @@ exports.selectArticles = ({topic, sort_by, order}) => {
     sqlString += `ORDER BY ${sort_by === undefined ? 'created_at' : sort_by} ${order === undefined ? 'DESC' : order};`;
 
     return db.query(sqlString, queryValues)
-    .then((data) => {
-        if (!data.rows.length) {
+    .then(({rows}) => {
+        if (!rows.length) {
             if (topic) {
-                return data;
+                return rows;
             }
             return Promise.reject({ status: 404, message: "No articles exist" });
         }
-        return data;
+        return rows;
 
     })
 
@@ -59,11 +59,11 @@ exports.selectArticleById = (articleId) => {
     `;
 
     return db.query(sqlString, [articleId])
-    .then((data) => {
-        if (!data.rows.length) {
+    .then(({rows}) => {
+        if (!rows.length) {
             return Promise.reject({ status: 404, message: "Opps, article does not exist" })
         }
-        return data;
+        return rows[0];
 
     })
 }
@@ -79,8 +79,8 @@ exports.patchArticleVotes = ({inc_votes}, articleId) => {
     `;
 
     return db.query(sqlString, [inc_votes, articleId])
-    .then((data) => {
-        return data;
+    .then(({rows}) => {
+        return rows[0];
 
     })
 }
