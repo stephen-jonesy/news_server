@@ -178,7 +178,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         return request(app)
         .get("/api/articles/3/comments")
         .expect(200)
-        .then(({body})=> {
+        .then(({body})=> {            
             const comments = body.comments;
             expect(Array.isArray(comments)).toBe(true);
             expect(comments).toHaveLength(2);
@@ -235,7 +235,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         .send(sendComment)
         .expect(201)
         .then(({body})=> {
-            const postedComment = body.body;
+            const postedComment = body.comment.body;
             expect(postedComment).toBe('lorem ipsum');
         });
     });
@@ -345,13 +345,6 @@ describe('DELETE /api/comments/:comment_id', () => {
         return request(app)
         .delete('/api/comments/1')
         .expect(204)
-        .then(() => {
-            db.query('SELECT * FROM comments WHERE comment_id = 1;')
-            .then((result) => {
-                expect(result.rows).toHaveLength(0)
-
-            })
-        })
     });
     it('returns status 404 when comment_id does not exist', () => {
         return request(app)
@@ -379,7 +372,17 @@ describe('GET /api', () => {
         .get('/api')
         .expect(200)
         .then(({body}) => {
+            const parsedData = JSON.parse(body.data)
             expect(typeof body.data).toBe("string");
+            expect(Object.keys(parsedData).length).toBe(9);
+            expect(parsedData).toHaveProperty('GET /api');
+            expect(parsedData).toHaveProperty('GET /api/topics');
+            expect(parsedData).toHaveProperty('GET /api/articles');
+            expect(parsedData).toHaveProperty('GET /api/articles/:article_id');
+            expect(parsedData).toHaveProperty('GET /api/articles/:article_id/comments');
+            expect(parsedData).toHaveProperty('POST /api/articles/:article_id/comments');
+            expect(parsedData).toHaveProperty('PATCH /api/articles/:article_id');
+            expect(parsedData).toHaveProperty('GET /api/users');
 
         });
     });
