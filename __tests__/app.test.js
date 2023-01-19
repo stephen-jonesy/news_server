@@ -372,3 +372,15 @@ describe('DELETE /api/comments/:comment_id', () => {
 
     });
 });
+
+describe('GET /api', () => {
+    it('returns a status: 200 and a JSON object ', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then(({body}) => {
+            expect(typeof body.data).toBe("string");
+
+        })
+    });
+});
