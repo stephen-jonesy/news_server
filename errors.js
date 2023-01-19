@@ -15,5 +15,5 @@ exports.psqlErrors = (err, req, res, next) => {
 }
 
 exports.serverErrors = (err, req, res, next) => {
-      res.status(500).send({ message: 'Internal Server Error' });
+  res.status(500).send({ message: 'Internal Server Error' });
 }

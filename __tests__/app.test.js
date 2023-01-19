@@ -65,6 +65,75 @@ describe('GET /api/articles', () => {
         .expect(404)
 
     });
+    it('returns 200 status and queried articles but topic when endpoint contains a topic query', () => {
+        return request(app)
+        .get("/api/articles?topic=cats")
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles.length > 0).toBe(true)
+            body.articles.forEach((article)=> {
+                expect(article).toEqual(
+                    expect.objectContaining({topic: 'cats'})
+    
+                );
+            });
+
+        });
+    });
+    it('returns 200 status and sorts articles by sortBy when endpoint contains a sortBy query ', () => {
+        return request(app)
+        .get("/api/articles?sort_by=author")
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy("author", {
+                descending: true,
+            });
+        });
+    });
+    it('returns 200 status and orders created_by by ascending', () => {
+        return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy("created_at", {
+                descending: false,
+            });
+        });
+    });
+    it('returns 200 status and sorts articles by author in ascending order', () => {
+        return request(app)
+        .get("/api/articles?sort_by=author&order=asc")
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy("author", {
+                descending: false,
+            });
+        });
+    });
+    it('returns 200 and message if topic category doesn\'t exist', () => {
+        return request(app)
+        .get("/api/articles?topic=stuff")
+        .expect(200)
+        .then(({body}) => {
+            expect(body.message).toBe("Topic doesn't exist");
+        })
+    });
+    it('returns status of 400 and error message when passed an invalid sort_by query ', () => {
+        return request(app)
+        .get("/api/articles?sort_by=stuff")
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toBe('Invalid sort query');
+        })
+    });
+    it('returns status of 400 and error message when passed an invalid order query ', () => {
+        return request(app)
+        .get("/api/articles?order=stuff")
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toBe('Invalid order query');
+        })
+    });
 
 });
 
@@ -78,6 +147,7 @@ describe('GET /api/articles/:article_id', () => {
             expect(article instanceof Object).toBe(true);
             expect(article).toHaveProperty('article_id', 2);
             expect(article).toHaveProperty('title', 'Sony Vaio; or, The Laptop');
+
         })
     });
     it("returns 400 status when passed an article_id that doesn\'t exist", () => {
@@ -87,6 +157,17 @@ describe('GET /api/articles/:article_id', () => {
         .then(({body}) => {
             expect(body.message).toBe("Opps, article does not exist");
         })
+    });
+    it('returns status of 200 with a comment_count property ', () => {
+        return request(app)
+        .get("/api/articles/2")
+        .expect(200)
+        .then(({body}) => {
+            const article = body.article;
+            expect(article).toHaveProperty('comment_count', '0');
+
+        })
+
     });
 
 });
@@ -117,7 +198,7 @@ describe('GET /api/articles/:article_id/comments', () => {
     });
     it('Returns 404 status and message when article does not exist ', () => {
         return request(app)
-        .get("/api/articles/77/comments")
+        .get("/api/articles/10000/comments")
         .expect(404)
         .then(({body}) => {
             expect(body.message).toBe('Opps, article does not exist');
@@ -188,24 +269,27 @@ describe('POST /api/articles/:article_id/comments', () => {
 
 describe('PATCH /api/articles/:article_id', () => {
     it('returns status 200 and updated article with new votes value', () => {
-        const returnedArticle = {
-            article_id: 1,
-            title: 'Living in the shadow of a great man',
-            topic: 'mitch',
-            author: 'butter_bridge',
-            body: 'I find this existence challenging',
-            created_at: "2020-07-09T20:11:00.000Z",            
-            votes: 101,
-            article_img_url:
-              'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
-        }
+
+
         return request(app)
         .patch("/api/articles/1")
         .send({ inc_votes: 1 })
         .expect(200)
         .then(({body}) => {
-            expect(body.article.votes).toBe(101);
-
+            expect(body.article).toEqual(
+                expect.objectContaining({
+                    article_id: 1,
+                    votes: 101
+                })
+            )
+           
+            expect(body.article).toEqual(
+                expect.objectContaining({
+                    article_id: 1,
+                    votes: 101
+                })
+            )
+           
         })
     });
     it('returns status 200 and returned object with result of negative number being taken away from votes property', () => {
@@ -215,7 +299,13 @@ describe('PATCH /api/articles/:article_id', () => {
         .send({ inc_votes: -101 })
         .expect(200)
         .then(({body}) => {
-            expect(body.article.votes).toEqual(-1);
+            
+            expect(body.article).toEqual(
+                expect.objectContaining({
+                    article_id: 1,
+                    votes: -1
+                })
+            );
 
         })
     });
