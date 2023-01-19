@@ -14,8 +14,12 @@ exports.getTopics = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    return selectArticles()
+    return selectArticles(req.query)
     .then(({rows}) => {
+        if (!rows.length) {
+            res.status(200).send({message: "Topic doesn't exist"})
+
+        }
         const articles = rows;
         res.status(200).send({articles})
     })
@@ -78,7 +82,7 @@ exports.updateArticleVotes = (req, res, next) => {
 
     return patchArticleVotes(body, articleId)
     .then(({rows}) => {
-        res.status(200).send(rows)
+        res.status(200).send({article: rows[0]})
     })
     .catch((err) => {
         next(err);
