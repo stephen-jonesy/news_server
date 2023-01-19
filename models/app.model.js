@@ -12,6 +12,10 @@ exports.selectTopics = () => {
 exports.selectArticles = ({topic, sort_by, order}) => {
     const queryValues = [];
 
+    const validSortBys = ['title', 'topic', 'author', 'body', 'created_at', 'article_img_url'];
+
+    const validOrderBys = ['asc', 'desc'];
+
     let sqlString = `
         SELECT articles.*, COUNT(comments.article_id) as comment_count 
         FROM articles
@@ -26,11 +30,11 @@ exports.selectArticles = ({topic, sort_by, order}) => {
         queryValues.push(topic);
     }
 
-    if (sort_by && !['title', 'topic', 'author', 'body', 'created_at', 'article_img_url'].includes(sort_by)) {
+    if (sort_by && !validSortBys.includes(sort_by)) {
         return Promise.reject({ status: 400, message: 'Invalid sort query' });
     }
 
-    if (order && !['asc', 'desc'].includes(order)) {
+    if (order && !validOrderBys.includes(order)) {
         return Promise.reject({ status: 400, message: 'Invalid order query' });
     }
 
