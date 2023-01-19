@@ -6,7 +6,6 @@ exports.selectCommentsByArticleId = (articleId) => {
         WHERE comments.article_id = $1
         ORDER BY created_at DESC;
     `;
-    console.log('model');
 
     return db.query(sqlComments,[articleId])
     .then((data)=> {
@@ -25,7 +24,6 @@ exports.addCommentById = (articleId, {username, body}) => {
 }
 
 exports.deleteCommentById = (comment_id) => {
-    console.log(comment_id, '<< in model');
     const sqlString = `
         DELETE FROM comments WHERE comment_id = $1
         returning *;
