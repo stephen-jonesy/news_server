@@ -44,7 +44,7 @@ describe('GET /api/articles', () => {
             expect(articles).toBeSortedBy("created_at", {
                 descending: true,
             });
-            expect(articles).toHaveLength(5);
+            expect(articles).toHaveLength(12);
             articles.forEach((article) => {
                 expect(article).toHaveProperty("author");
                 expect(article).toHaveProperty("title");   
@@ -147,6 +147,7 @@ describe('GET /api/articles/:article_id', () => {
             expect(article instanceof Object).toBe(true);
             expect(article).toHaveProperty('article_id', 2);
             expect(article).toHaveProperty('title', 'Sony Vaio; or, The Laptop');
+
         })
     });
     it("returns 400 status when passed an article_id that doesn\'t exist", () => {
@@ -156,6 +157,17 @@ describe('GET /api/articles/:article_id', () => {
         .then(({body}) => {
             expect(body.message).toBe("Opps, article does not exist");
         })
+    });
+    it('returns status of 200 with a comment_count property ', () => {
+        return request(app)
+        .get("/api/articles/2")
+        .expect(200)
+        .then(({body}) => {
+            const article = body.article;
+            expect(article).toHaveProperty('comment_count', '0');
+
+        })
+
     });
 
 });
@@ -258,11 +270,19 @@ describe('POST /api/articles/:article_id/comments', () => {
 describe('PATCH /api/articles/:article_id', () => {
     it('returns status 200 and updated article with new votes value', () => {
 
+
         return request(app)
         .patch("/api/articles/1")
         .send({ inc_votes: 1 })
         .expect(200)
         .then(({body}) => {
+            expect(body.article).toEqual(
+                expect.objectContaining({
+                    article_id: 1,
+                    votes: 101
+                })
+            )
+           
             expect(body.article).toEqual(
                 expect.objectContaining({
                     article_id: 1,
@@ -279,6 +299,7 @@ describe('PATCH /api/articles/:article_id', () => {
         .send({ inc_votes: -101 })
         .expect(200)
         .then(({body}) => {
+            
             expect(body.article).toEqual(
                 expect.objectContaining({
                     article_id: 1,
