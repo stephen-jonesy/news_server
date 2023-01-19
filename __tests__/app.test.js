@@ -226,16 +226,16 @@ describe('GET /api/articles/:article_id/comments', () => {
 
 describe('POST /api/articles/:article_id/comments', () => {
     it('returns with a status: 201 and responds with the posted comment', () => {
-        const comment = {
+        const sendComment = {
             username: 'rogersop',
             body: 'lorem ipsum'
         }
         return request(app)
         .post("/api/articles/1/comments")
-        .send(comment)
+        .send(sendComment)
         .expect(201)
         .then(({body})=> {
-            const postedComment = body.comment.body
+            const postedComment = body.body;
             expect(postedComment).toBe('lorem ipsum');
         })
     });
@@ -337,5 +337,38 @@ describe('GET /api/users', () => {
 
             });    
         })
+    });
+});
+
+describe('DELETE /api/comments/:comment_id', () => {
+    it('returns status of 204 when sent the correct id and comment is removed from the comments table', () => {
+        return request(app)
+        .delete('/api/comments/1')
+        .expect(204)
+        .then(() => {
+            db.query('SELECT * FROM comments WHERE comment_id = 1;')
+            .then((result) => {
+                expect(result.rows).toHaveLength(0)
+
+            })
+        })
+    });
+    it('returns status 404 when comment_id does not exist', () => {
+        return request(app)
+        .delete('/api/comments/1000')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.message).toBe('Opps, comment does not exist');
+        })
+
+    });
+    it('returns status 404 when comment_id does not exist', () => {
+        return request(app)
+        .delete('/api/comments/stuff')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toBe('Bad request');
+        })
+
     });
 });

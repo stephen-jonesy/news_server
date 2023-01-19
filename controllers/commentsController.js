@@ -1,5 +1,5 @@
-const { selectCommentsByArticleId, selectArticleById, addCommentById } = require("../models/app.model");
-
+const { selectArticleById } = require("../models/articles.model");
+const { selectCommentsByArticleId, addCommentById, deleteCommentById } = require("../models/comments.app");
 
 exports.getCommentsByArticleId = (req, res, next) => {
 
@@ -7,13 +7,13 @@ exports.getCommentsByArticleId = (req, res, next) => {
 
     return Promise.all([selectCommentsByArticleId(articleId), selectArticleById(articleId)])
     .then((data) => {
-        const {rows} = data[0];
-        if (!rows.length) {
+        const comments = data[0];
+        if (!comments.length) {
             res.status(200).send({message: 'No comments found'})
 
         }
         else {
-            res.status(200).send({comments: rows})
+            res.status(200).send({comments})
 
         }
 
@@ -30,11 +30,25 @@ exports.postCommentById = (req, res, next) => {
     const { body } = req;
     
     return addCommentById(articleId, body)
-    .then(({rows}) => {
-        res.status(201).send({comment:rows[0]})
+    .then((comment) => {
+        res.status(201).send(comment);
     })
     .catch((err) => {
         next(err);
     });
     
 }
+
+exports.removeCommentById = (req, res, next) => {
+
+    const {comment_id} = req.params;
+    return deleteCommentById(comment_id)
+    .then(() => {
+        res.status(204).send();
+    })
+    .catch((err) => {
+
+        next(err);
+    })
+}
+

@@ -1,8 +1,9 @@
 const express = require("express");
 const { getArticles, getArticleById, updateArticleVotes } = require("./controllers/articlesController");
-const { getCommentsByArticleId, postCommentById } = require("./controllers/commentsController");
+const { postCommentById, removeCommentById, getCommentsByArticleId } = require("./controllers/commentsController");
 const { getTopics } = require("./controllers/topicsController");
-const { getUsers } = require("./controllers/userController");
+const { getUsers } = require("./controllers/usersController");
+const { customErrors, psqlErrors, serverErrors } = require("./errors");
 
 const app = express();
 
@@ -22,23 +23,12 @@ app.patch('/api/articles/:article_id', updateArticleVotes);
 
 app.get('/api/users', getUsers);
 
-app.use((err, req, res, next) => {
-    if (err.status) {
-      res.status(err.status).send({ message: err.message });
-    } else next(err);
-});
-  
-app.use((err, req, res, next) => {
-    if (err.code === '22P02' || err.code === "23502" ) {
-      res.status(400).send({ message: 'Bad request' });
-    }else if(err.code === "23503"){
-      res.status(404).send({ message: 'Not found' });
+app.delete('/api/comments/:comment_id', removeCommentById);
 
-    } else next(err);
-});
+app.use(customErrors);
   
-app.use((err, req, res, next) => {
-    res.status(500).send({ message: 'Internal Server Error' });
-});
+app.use(psqlErrors);
+  
+app.use(serverErrors);
 
 module.exports = app;
