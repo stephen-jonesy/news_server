@@ -23,7 +23,7 @@ describe('GET /api/topics', () => {
             expect(Array.isArray(topics)).toBe(true);
             expect(topics.length).toBe(3);
 
-        })
+        });
     });
     it('returns status 404 for a bad endpoint', () => {
         return request(app)
@@ -57,12 +57,12 @@ describe('GET /api/articles', () => {
                     
             });
             
-        })
-    })
+        });
+    });
     it('returns status 404 for a bad endpoint', () => {
         return request(app)
         .get("/api/article")
-        .expect(404)
+        .expect(404);
 
     });
     it('returns 200 status and queried articles but topic when endpoint contains a topic query', () => {
@@ -116,7 +116,7 @@ describe('GET /api/articles', () => {
         .expect(200)
         .then(({body}) => {
             expect(body.message).toBe("Topic doesn't exist");
-        })
+        });
     });
     it('returns status of 400 and error message when passed an invalid sort_by query ', () => {
         return request(app)
@@ -124,7 +124,7 @@ describe('GET /api/articles', () => {
         .expect(400)
         .then(({body}) => {
             expect(body.message).toBe('Invalid sort query');
-        })
+        });
     });
     it('returns status of 400 and error message when passed an invalid order query ', () => {
         return request(app)
@@ -132,7 +132,7 @@ describe('GET /api/articles', () => {
         .expect(400)
         .then(({body}) => {
             expect(body.message).toBe('Invalid order query');
-        })
+        });
     });
 
 });
@@ -166,7 +166,7 @@ describe('GET /api/articles/:article_id', () => {
             const article = body.article;
             expect(article).toHaveProperty('comment_count', '0');
 
-        })
+        });
 
     });
 
@@ -229,7 +229,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         const sendComment = {
             username: 'rogersop',
             body: 'lorem ipsum'
-        }
+        };
         return request(app)
         .post("/api/articles/1/comments")
         .send(sendComment)
@@ -237,7 +237,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         .then(({body})=> {
             const postedComment = body.body;
             expect(postedComment).toBe('lorem ipsum');
-        })
+        });
     });
     it('returns with a status: 400 when all necessary properties are not sent to the server', () => {
         const comment = {
@@ -288,9 +288,9 @@ describe('PATCH /api/articles/:article_id', () => {
                     article_id: 1,
                     votes: 101
                 })
-            )
+            );
            
-        })
+        });
     });
     it('returns status 200 and returned object with result of negative number being taken away from votes property', () => {
 
@@ -307,7 +307,7 @@ describe('PATCH /api/articles/:article_id', () => {
                 })
             );
 
-        })
+        });
     });
     it('returns status 400 when sent an invalid data type', () => {
         return request(app)
@@ -317,7 +317,7 @@ describe('PATCH /api/articles/:article_id', () => {
         .then(({body}) => {
             expect(body.message).toBe('Bad request');
 
-        })
+        });
     });
 });
 
@@ -336,7 +336,7 @@ describe('GET /api/users', () => {
                 expect(user).toHaveProperty("avatar_url");      
 
             });    
-        })
+        });
     });
 });
 
@@ -381,6 +381,6 @@ describe('GET /api', () => {
         .then(({body}) => {
             expect(typeof body.data).toBe("string");
 
-        })
+        });
     });
 });
