@@ -110,12 +110,12 @@ describe('GET /api/articles', () => {
             });
         });
     });
-    it('returns 404 and message if topic category doesn\'t exist', () => {
+    it('returns 200 and message if topic category doesn\'t exist', () => {
         return request(app)
         .get("/api/articles?topic=stuff")
-        .expect(404)
+        .expect(200)
         .then(({body}) => {
-            expect(body.message).toBe('Article doesn\'t exist');
+            expect(body.message).toBe("Topic doesn't exist");
         })
     });
     it('returns status of 400 and error message when passed an invalid sort_by query ', () => {

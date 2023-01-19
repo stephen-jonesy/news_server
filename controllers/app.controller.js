@@ -16,6 +16,10 @@ exports.getTopics = (req, res, next) => {
 exports.getArticles = (req, res, next) => {
     return selectArticles(req.query)
     .then(({rows}) => {
+        if (!rows.length) {
+            res.status(200).send({message: "Topic doesn't exist"})
+
+        }
         const articles = rows;
         res.status(200).send({articles})
     })

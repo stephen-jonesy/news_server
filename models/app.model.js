@@ -43,7 +43,10 @@ exports.selectArticles = ({topic, sort_by, order}) => {
     return db.query(sqlString, queryValues)
     .then((data) => {
         if (!data.rows.length) {
-            return Promise.reject({ status: 404, message: "Article doesn\'t exist" });
+            if (topic) {
+                return data;
+            }
+            return Promise.reject({ status: 404, message: "No articles exist" });
         }
         return data;
 
