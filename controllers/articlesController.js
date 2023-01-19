@@ -1,9 +1,12 @@
 const { selectArticles, selectArticleById, patchArticleVotes } = require("../models/app.model");
 
 exports.getArticles = (req, res, next) => {
-    
-    return selectArticles()
+    return selectArticles(req.query)
     .then(({rows}) => {
+        if (!rows.length) {
+            res.status(200).send({message: "Topic doesn't exist"})
+
+        }
         const articles = rows;
         res.status(200).send({articles})
     })
@@ -12,7 +15,6 @@ exports.getArticles = (req, res, next) => {
     })
 
 }
-
 exports.getArticleById = (req, res, next) => {
 
     const articleId = req.params.article_id;
