@@ -9,7 +9,7 @@ exports.selectTopics = () => {
 
 exports.selectArticles = () => {
     const sqlString = `
-        SELECT articles.*, COUNT(comments.article_id) as comment_count 
+        SELECT articles.*, COUNT(comments.article_id) AS comment_count 
         FROM articles
         LEFT JOIN comments
         ON articles.article_id = comments.article_id
@@ -30,7 +30,7 @@ exports.selectArticles = () => {
 exports.selectArticleById = (articleId) => {
 
     const sqlString = `
-        SELECT articles.*, COUNT(comments.article_id) as comment_count 
+        SELECT articles.*, COUNT(comments.article_id) AS comment_count 
         FROM articles
         LEFT JOIN comments
         ON articles.article_id = comments.article_id
@@ -52,7 +52,7 @@ exports.selectArticleById = (articleId) => {
 exports.selectCommentsByArticleId = (articleId) => {
     const sqlComments = `
         SELECT * FROM comments
-        where comments.article_id = $1
+        WHERE comments.article_id = $1
         ORDER BY created_at DESC;
     `;
 
