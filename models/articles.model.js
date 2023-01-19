@@ -1,12 +1,5 @@
 const db = require('../db/connection')
 
-exports.selectTopics = () => {
-    const sqlString = `
-        SELECT * FROM topics;
-    `
-    return db.query(sqlString);
-}
-
 exports.selectArticles = () => {
     const sqlString = `
         SELECT articles.*, COUNT(comments.article_id) as comment_count 
@@ -45,29 +38,6 @@ exports.selectArticleById = (articleId) => {
     })
 }
 
-exports.selectCommentsByArticleId = (articleId) => {
-    const sqlComments = `
-        SELECT * FROM comments
-        where comments.article_id = $1
-        ORDER BY created_at DESC;
-    `;
-
-    return db.query(sqlComments,[articleId])
-    .then((data)=> {
-        return data;
-    })
-}
-
-exports.addCommentById = (articleId, {username, body}) => {
-    const sqlString = `
-        INSERT INTO comments
-        (body, article_id, author)
-        VALUES ($1, $2, $3) RETURNING *;
-    `;
-    return db.query(sqlString, [body, articleId, username])
-    
-}
-
 exports.patchArticleVotes = ({inc_votes}, articleId) => {
 
     const sqlString = `
@@ -84,30 +54,3 @@ exports.patchArticleVotes = ({inc_votes}, articleId) => {
 
     })
 }
-
-exports.selectUsers = () => {
-
-    const sqlString = `
-        SELECT * FROM users;
-    `
-    return db.query(sqlString);
-
-}
-
-exports.deleteCommentById = (comment_id) => {
-    console.log(comment_id, '<< in model');
-    const sqlString = `
-        DELETE FROM comments WHERE comment_id = $1
-        returning *;
-    `;
-
-    return db.query(sqlString, [comment_id])
-    .then((data) => {
-        if (!data.rows.length) {
-            return Promise.reject({ status: 404, message: "Opps, comment does not exist" })
-        }
-        return data
-    })
-
-}
-
