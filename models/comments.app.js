@@ -41,3 +41,21 @@ exports.deleteCommentById = (comment_id) => {
     })
 
 }
+
+exports.patchCommentVotes = ({inc_votes}, {comment_id}) => {
+
+    const sqlString = `
+        UPDATE comments
+        SET votes = votes + $1
+        WHERE comment_id = $2
+        returning *;
+    
+    `;
+
+    return db.query(sqlString, [inc_votes, comment_id])
+    .then(({rows}) => {
+        return rows[0];
+
+    })
+}
+

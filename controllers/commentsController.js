@@ -1,5 +1,5 @@
 const { selectArticleById } = require("../models/articles.model");
-const { selectCommentsByArticleId, addCommentById, deleteCommentById } = require("../models/comments.app");
+const { selectCommentsByArticleId, addCommentById, deleteCommentById, patchCommentVotes } = require("../models/comments.app");
 
 exports.getCommentsByArticleId = (req, res, next) => {
 
@@ -51,4 +51,15 @@ exports.removeCommentById = (req, res, next) => {
         next(err);
     })
 }
+
+exports.updateCommentVotes = (req, res, next) => {
+
+    return patchCommentVotes(req.body, req.params)
+    .then((comment) => {
+        res.status(200).send({comment});
+    })
+    .catch((err)=> {
+        next(err);
+    })
+};
 
