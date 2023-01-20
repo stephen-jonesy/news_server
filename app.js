@@ -4,6 +4,8 @@ const { postCommentById, removeCommentById, getCommentsByArticleId } = require("
 const { getTopics } = require("./controllers/topicsController");
 const { getUsers } = require("./controllers/usersController");
 const { customErrors, psqlErrors, serverErrors } = require("./errors");
+const fs = require("fs/promises");
+const { getJSON } = require("./controllers/mapController");
 
 const app = express();
 
@@ -24,6 +26,8 @@ app.patch('/api/articles/:article_id', updateArticleVotes);
 app.get('/api/users', getUsers);
 
 app.delete('/api/comments/:comment_id', removeCommentById);
+
+app.get('/api', getJSON);
 
 app.use(customErrors);
   
