@@ -7,7 +7,7 @@ exports.getJSON = (req, res, next) => {
         res.status(200).send({data: JSONdata});
   
     })
-    .catch((err) => {
+    .catch((err) => {      
         next(err);
 
     })
