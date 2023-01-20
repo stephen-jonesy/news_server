@@ -90,7 +90,7 @@
     }
   },
   "PATCH /api/articles/:article_id" : {
-    "description": "Updates an existing article by the votes property and then serves the single updated article. Example request: { inc_votes: 10 }",
+    "description": "Updates an existing article by the votes property and then serves the single updated article.",
     "queries": [],
     "exampleBody": 
     { "inc_votes": 10 }
