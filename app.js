@@ -6,28 +6,13 @@ const { getUsers } = require("./controllers/usersController");
 const { customErrors, psqlErrors, serverErrors } = require("./errors");
 const fs = require("fs/promises");
 const { getJSON } = require("./controllers/mapController");
+const apiRouter = require('./routes/api-router');
 
 const app = express();
 
 app.use(express.json());
 
-app.get("/api/topics", getTopics);
-
-app.get("/api/articles", getArticles);
-
-app.get("/api/articles/:article_id", getArticleById);
-
-app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
-
-app.post('/api/articles/:article_id/comments', postCommentById);
-
-app.patch('/api/articles/:article_id', updateArticleVotes);
-
-app.get('/api/users', getUsers);
-
-app.delete('/api/comments/:comment_id', removeCommentById);
-
-app.get('/api', getJSON);
+app.use('/api', apiRouter);
 
 app.use(customErrors);
   
