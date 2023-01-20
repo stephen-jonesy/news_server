@@ -411,3 +411,50 @@ describe('GET /api/users/:username', () => {
         })
     });
 });
+
+
+describe('PATCH /api/comments/:comment_id', () => {
+    it('returns status 200 and updated comment with new votes value', () => {
+
+        return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then(({body}) => {
+            expect(body.comment).toEqual(
+                expect.objectContaining({
+                    article_id: 9,
+                    votes: 17
+                })
+            )
+           
+        });
+    });
+    it('returns status 200 and returned object with result of negative number being taken away from votes property', () => {
+
+        return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: -17 })
+        .expect(200)
+        .then(({body}) => {
+            console.log(body);
+            expect(body.comment).toEqual(
+                expect.objectContaining({
+                    article_id: 9,
+                    votes: -1
+                })
+            );
+
+        });
+    });
+    it('returns status 400 when sent an invalid data type', () => {
+        return request(app)
+        .patch("/api/comments/1")
+        .send({ invalid: -10 })
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toBe('Bad request');
+
+        });
+    });
+});
