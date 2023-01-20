@@ -437,7 +437,6 @@ describe('PATCH /api/comments/:comment_id', () => {
         .send({ inc_votes: -17 })
         .expect(200)
         .then(({body}) => {
-            console.log(body);
             expect(body.comment).toEqual(
                 expect.objectContaining({
                     article_id: 9,
