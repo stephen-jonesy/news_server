@@ -22,6 +22,32 @@ And a `.env.development` file:
 PGDATABASE=nc_news
 ```
 
+## Instructions
+
+Begin by cloning the repo:
+
+```
+git clone https://github.com/stephen-jonesy/news_server.git
+```
+
+Installing dependencies :
+
+```
+npm i
+```
+ 
+Then set up the local database:
+
+ ```
+npm run setup-dbs
+```
+
+And finally run a test:
+
+```
+npm run t
+```
+
 ## Minimum versions
 
 Minimum versions of `Node.js` and `Postgres` needed to run the project:
