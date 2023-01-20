@@ -1,26 +1,21 @@
 const { getArticles, getArticleById, updateArticleVotes } = require('../controllers/articlesController');
 const { getCommentsByArticleId, postCommentById, removeCommentById } = require('../controllers/commentsController');
 const { getJSON } = require('../controllers/mapController');
-const { getTopics } = require('../controllers/topicsController');
 const { getUsers } = require('../controllers/usersController');
 const apiRouter = require('express').Router();
+const articlesRouter = require('./articles-router');
+const commentsRouter = require('./comments-router');
+const topicsRouter = require('./topics-router');
+const usersRouter = require('./users-router');
 
 apiRouter.get('/', getJSON);
 
-apiRouter.get("/topics", getTopics);
+apiRouter.use("/articles", articlesRouter);
 
-apiRouter.get("/articles", getArticles);
+apiRouter.use("/comments", commentsRouter);
 
-apiRouter.get("/articles/:article_id", getArticleById);
+apiRouter.use("/topics", topicsRouter);
 
-apiRouter.get("/articles/:article_id/comments", getCommentsByArticleId);
-
-apiRouter.post('/articles/:article_id/comments', postCommentById);
-
-apiRouter.patch('/articles/:article_id', updateArticleVotes);
-
-apiRouter.get('/users', getUsers);
-
-apiRouter.delete('/comments/:comment_id', removeCommentById);
+apiRouter.use('/users', usersRouter);
 
 module.exports = apiRouter;
