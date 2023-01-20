@@ -1,7 +1,4 @@
-const { getArticles, getArticleById, updateArticleVotes } = require('../controllers/articlesController');
-const { getCommentsByArticleId, postCommentById, removeCommentById } = require('../controllers/commentsController');
 const { getJSON } = require('../controllers/mapController');
-const { getUsers } = require('../controllers/usersController');
 const apiRouter = require('express').Router();
 const articlesRouter = require('./articles-router');
 const commentsRouter = require('./comments-router');
