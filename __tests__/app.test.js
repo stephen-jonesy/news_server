@@ -387,3 +387,27 @@ describe('GET /api', () => {
         });
     });
 });
+
+describe.only('GET /api/users/:username', () => {
+    it('returns 200 status and correct user by username', () => {
+        return request(app)
+        .get("/api/users/icellusedkars")
+        .expect(200)
+        .then(({body}) => {
+            const user = body.user;
+            expect(user instanceof Object).toBe(true);
+            expect(user).toHaveProperty('username', 'icellusedkars');
+            expect(user).toHaveProperty('name', 'sam');
+            expect(user).toHaveProperty('avatar_url', 'https://avatars2.githubusercontent.com/u/24604688?s=460&v=4');
+
+        })
+    });
+    it("returns 400 status when passed a username that doesn\'t exist", () => {
+        return request(app)
+        .get("/api/users/stuff")
+        .expect(404)
+        .then(({body}) => {
+            expect(body.message).toBe("Opps, user does not exist");
+        })
+    });
+});
