@@ -388,7 +388,7 @@ describe('GET /api', () => {
     });
 });
 
-describe.only('GET /api/users/:username', () => {
+describe('GET /api/users/:username', () => {
     it('returns 200 status and correct user by username', () => {
         return request(app)
         .get("/api/users/icellusedkars")
