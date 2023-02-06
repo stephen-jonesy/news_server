@@ -7,8 +7,11 @@ const { customErrors, psqlErrors, serverErrors } = require("./errors");
 const fs = require("fs/promises");
 const { getJSON } = require("./controllers/mapController");
 const apiRouter = require('./routes/api-router');
+const cors = require('cors');
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 
