@@ -4,7 +4,7 @@ exports.selectArticles = ({topic, sort_by, order}) => {
 
     const queryValues = [];
 
-    const validSortBys = ['title', 'topic', 'author', 'body', 'created_at', 'article_img_url'];
+    const validSortBys = ['title', 'topic', 'author', 'body', 'created_at', 'article_img_url', 'votes', 'comment_count'];
 
     const validOrderBys = ['asc', 'desc'];
 

@@ -110,6 +110,16 @@ describe('GET /api/articles', () => {
             });
         });
     });
+    it('returns 200 status and sorts by votes and ascending', () => {
+        return request(app)
+        .get("/api/articles?sort_by=votes&order=asc")
+        .expect(200)
+        .then(({body}) => {
+            expect(body.articles).toBeSortedBy("votes", {
+                descending: false,
+            });
+        });
+    });
     it('returns 200 and message if topic category doesn\'t exist', () => {
         return request(app)
         .get("/api/articles?topic=stuff")
