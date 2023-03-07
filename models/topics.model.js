@@ -1,11 +1,10 @@
 const db = require("../db/connection");
 
 exports.selectTopics = () => {
-    const sqlString = `
-        SELECT * FROM topics;
-    `;
-    return db.query(sqlString)
-    .then(({rows}) => {
-        return rows;
-    })
+  const sqlString = `
+        SELECT * FROM topics
+ç    `;
+  return db.query(sqlString).then(({ rows }) => {
+    return rows;
+  });
 };
