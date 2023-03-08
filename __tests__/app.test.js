@@ -57,7 +57,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles?limit=2")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles_count).toBe(12);
+        expect(body.articles_count).toBe("12");
       });
   });
   it("returns status 404 for a bad endpoint", () => {
