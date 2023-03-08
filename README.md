@@ -45,7 +45,7 @@ npm run setup-dbs
 And finally run a test:
 
 ```
-npm run t
+npm run test
 ```
 
 ## Minimum versions
