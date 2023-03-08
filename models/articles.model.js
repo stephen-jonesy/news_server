@@ -16,7 +16,7 @@ exports.selectArticles = ({ topic, sort_by, order, limit, page }) => {
 
   const validOrderBys = ["asc", "desc"];
 
-  const limitFormated = !limit ? "10" : limit;
+  const limitFormated = !limit ? "12" : limit;
 
   let sqlString = `
         SELECT articles.*, COUNT(comments.article_id) AS comment_count 

@@ -39,7 +39,7 @@ describe("GET /api/articles", () => {
         expect(articles).toBeSortedBy("created_at", {
           descending: true,
         });
-        expect(articles).toHaveLength(10);
+        expect(articles).toHaveLength(12);
         articles.forEach((article) => {
           expect(article).toHaveProperty("author");
           expect(article).toHaveProperty("title");
