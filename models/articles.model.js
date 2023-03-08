@@ -67,7 +67,6 @@ exports.selectArticles = ({ topic, sort_by, order, limit, page }) => {
   const sqlTable = db.query(sqlString, queryValues);
   const sqlCount = db.query(countSqlString, queryValues);
   return Promise.all([sqlTable, sqlCount]).then((value) => {
-    console.log(value);
     if (!value[0].rows.length) {
       if (topic) {
         return { articles: value[0].rows, articles_count: value[1].rowCount };

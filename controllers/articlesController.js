@@ -5,7 +5,6 @@ const {
 } = require("../models/articles.model");
 
 exports.getArticles = (req, res, next) => {
-  console.log(req.query);
   return selectArticles(req.query)
     .then(({ articles, articles_count }) => {
       if (!articles.length) {
