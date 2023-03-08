@@ -39,7 +39,7 @@ describe("GET /api/articles", () => {
         expect(articles).toBeSortedBy("created_at", {
           descending: true,
         });
-        expect(articles).toHaveLength(10);
+        expect(articles).toHaveLength(12);
         articles.forEach((article) => {
           expect(article).toHaveProperty("author");
           expect(article).toHaveProperty("title");
@@ -57,7 +57,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles?limit=2")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles_count).toBe(12);
+        expect(body.articles_count).toBe("12");
       });
   });
   it("returns status 404 for a bad endpoint", () => {

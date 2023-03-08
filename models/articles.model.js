@@ -16,7 +16,7 @@ exports.selectArticles = ({ topic, sort_by, order, limit, page }) => {
 
   const validOrderBys = ["asc", "desc"];
 
-  const limitFormated = !limit ? "10" : limit;
+  const limitFormated = !limit ? "12" : limit;
 
   let sqlString = `
         SELECT articles.*, COUNT(comments.article_id) AS comment_count 
@@ -25,9 +25,10 @@ exports.selectArticles = ({ topic, sort_by, order, limit, page }) => {
         ON articles.article_id = comments.article_id
         GROUP BY articles.article_id
     `;
-
+  countSqlString = `SELECT COUNT(*) FROM articles `;
   if (topic) {
     sqlString += `HAVING topic = $1 `;
+    countSqlString += `WHERE topic = $1;`;
     queryValues.push(topic);
   }
 
@@ -48,17 +49,9 @@ exports.selectArticles = ({ topic, sort_by, order, limit, page }) => {
   }
 
   sqlString += `ORDER BY ${
-    sort_by === undefined ? "articles.created_at" : `articles.${sort_by}`
+    sort_by === undefined ? "created_at" : `${sort_by}`
   } ${order === undefined ? "DESC" : order}
   `;
-
-  const lookingFor = "comment_count";
-
-  let countSqlString = sqlString.substring(
-    sqlString.indexOf(lookingFor) + lookingFor.length
-  );
-
-  countSqlString = "SELECT COUNT(articles.title)" + countSqlString;
 
   sqlString += `LIMIT ${limitFormated}  OFFSET ${
     !page ? "0" : limitFormated * (page - 1)
@@ -69,11 +62,15 @@ exports.selectArticles = ({ topic, sort_by, order, limit, page }) => {
   return Promise.all([sqlTable, sqlCount]).then((value) => {
     if (!value[0].rows.length) {
       if (topic) {
-        return { articles: value[0].rows, articles_count: value[1].rowCount };
+        return {
+          articles: value[0].rows,
+          articles_count: value[1].rows[0].count,
+        };
       }
       return Promise.reject({ status: 404, message: "No articles exist" });
     }
-    return { articles: value[0].rows, articles_count: value[1].rowCount };
+
+    return { articles: value[0].rows, articles_count: value[1].rows[0].count };
   });
 };
 
