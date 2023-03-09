@@ -98,14 +98,26 @@ exports.selectArticleById = (articleId) => {
 
 exports.patchArticleVotes = ({ inc_votes }, articleId) => {
   const sqlString = `
-        UPDATE articles
-        SET votes = votes + $1
-        WHERE article_id = $2
-        returning *;
-    
-    `;
+    UPDATE articles
+    SET votes = votes + $1
+    WHERE article_id = $2
+    returning *;
+  
+  `;
 
   return db.query(sqlString, [inc_votes, articleId]).then(({ rows }) => {
+    return rows[0];
+  });
+};
+
+exports.addArticle = ({ author, title, topic, body }) => {
+  const sqlString = `
+    INSERT INTO articles
+    (author, title, topic, body)
+    VALUES ($1, $2, $3, $4) RETURNING *;
+  `;
+  return db.query(sqlString, [author, title, topic, body]).then(({ rows }) => {
+    console.log(rows);
     return rows[0];
   });
 };

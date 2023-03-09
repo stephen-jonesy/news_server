@@ -140,6 +140,65 @@ describe("GET /api/articles", () => {
   });
 });
 
+describe("Post /api/articles", () => {
+  it("posts a new articles and returns new article body with 201 status", () => {
+    const postObj = {
+      author: "butter_bridge",
+      title: "stuff",
+      body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      topic: "paper",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(postObj)
+      .expect(201)
+      .then(({ body }) => {
+        const article = body.article;
+        expect(article).toHaveProperty("author", "butter_bridge");
+        expect(article).toHaveProperty("title", "stuff");
+        expect(article).toHaveProperty(
+          "body",
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        );
+        expect(article).toHaveProperty("topic", "paper");
+        expect(article).toHaveProperty(
+          "article_img_url",
+          "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+        );
+        expect(article).toHaveProperty("votes", 0);
+      });
+  });
+  it("returns with 400 when nessisary properties are not send to the database", () => {
+    const postObj = {
+      title: "stuff",
+      body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      topic: "paper",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(postObj)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad request");
+      });
+  });
+  it("returns 404 when author does not exist and status of 404", () => {
+    const postObj = {
+      author: "not_this_user",
+      title: "stuff",
+      body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      topic: "paper",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(postObj)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Not found");
+      });
+  });
+});
+
 describe("GET /api/articles/:article_id", () => {
   it("returns 200 status and correct article by id ", () => {
     return request(app)
