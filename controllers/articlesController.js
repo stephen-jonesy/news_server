@@ -43,7 +43,6 @@ exports.updateArticleVotes = (req, res, next) => {
 
 exports.postArticle = (req, res, next) => {
   const body = req.body;
-  console.log(body);
   return addArticle(body)
     .then((article) => {
       res.status(201).send({ article });

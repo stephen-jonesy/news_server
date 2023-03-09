@@ -117,7 +117,6 @@ exports.addArticle = ({ author, title, topic, body }) => {
     VALUES ($1, $2, $3, $4) RETURNING *;
   `;
   return db.query(sqlString, [author, title, topic, body]).then(({ rows }) => {
-    console.log(rows);
     return rows[0];
   });
 };
